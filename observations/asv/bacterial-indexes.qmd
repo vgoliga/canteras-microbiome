@@ -9,7 +9,7 @@ title: "Bacterial indexes"
 library(tidyverse)
 library(here)
 
-source(here("utils.R"))
+source(here("_common.R"))
 
 samples <- 
   read_csv(
@@ -36,7 +36,6 @@ indexes <-
     clostridia      = sum(reads[class    == "Clostridia"],          na.rm = T)
   ) |> 
   mutate(
-    index_ag   = (alpha) / gamma,
     index_as   = (alteromonas) / sar11,
     index_aos  = (alteromonas + oceanospirillum) / sar11,
     index_bngb = (bacteroidetes + nitrospira + gamma) / burkholderiales,
@@ -45,6 +44,13 @@ indexes <-
   pivot_longer(starts_with("index"), names_to = "index", names_prefix = "index_")
 ```
 
+| Index                | Formula                                                                                                | Reference      |
+|----------------------|:------------------------------------------------------------------------------------------------------:|----------------|
+| Alte.:SAR11          | $\frac{\text{Alteromonas}}{\text{SAR11}}$                                                              | [@ferrera2016] |
+| (Alte.+Ocea.):SAR11  | $\frac{\text{Alteromonas}+\text{Oceanospirillum}}{\text{SAR11}}$                                       | [@ferrera2016] |
+| (Bact.+Nitr.+γ):β    | $\frac{\text{Bacteroidetes}+\text{Nitrospira}+\text{Gammaproteobacteria}}{\text{Betaproteobacteria}}$  | [@garrido2014] |
+| (Baci+Bact+Clo):α    |  $\frac{\text{Bacilli}+\text{Bacteroidetes}+\text{Clostridia}}{\text{Alphaproteobacteria}}$            |  [@wu2010]     |
+ 
 ## Overview
 
 ```{r}
@@ -84,7 +90,7 @@ indexes |>
   scale_shape_discrete(labels = labels_location) +
   labs(x = "", y = "", shape = "", color = "") +
   theme_classic() +
-  theme(legend.position = "inside", legend.position.inside = c(.85, .25))
+  theme(legend.position = "bottom")
 ```
 
 ```{r}
@@ -97,6 +103,6 @@ indexes |>
   scale_x_discrete(labels = labels_season) +
   labs(x = "", y = "", shape = "", color = "") +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+  theme(axis.text.x = element_text(angle = 20, vjust = .5))
 ```
 

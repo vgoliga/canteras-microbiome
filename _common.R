@@ -78,9 +78,9 @@ labels_celltype <-
 
 labels_index <- 
   c(
-    "ag"     = "α/γ",
-    "as"     = "Alte./SAR11",
-    "aos"    = "(Alte.+Ocea.)/SAR11",
-    "bngb"   = "(Bact.+Nitr.+γ)/β",
-    "bbca"   = "(Baci.+Bact.+Clo.)/α"
+    "ag"     = "α:γ",
+    "as"     = "Alte.:SAR11",
+    "aos"    = "(Alte.+Ocea.):SAR11",
+    "bngb"   = "(Bact.+Nitr.+γ):β",
+    "bbca"   = "(Baci.+Bact.+Clo.):α"
   )
