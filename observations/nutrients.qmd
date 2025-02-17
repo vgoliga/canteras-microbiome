@@ -1,0 +1,183 @@
+---
+title: "Nutrients"
+---
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(here)
+
+source(here("utils.R"))
+
+nutrients <- 
+  read_csv(
+    here("data", "nutrients.csv"),
+    col_types = cols(location = col_factor(levels = locations), formula = col_factor())
+  ) |> 
+  make_seasons()
+
+filter_organic <- function(data){
+  data |> filter(formula %in% c("toc", "ton"))
+}
+
+filter_inorganic <- function(data){
+  data |>
+    filter(formula %in% c("silicate", "phosphate", "ammonium", "nitrates_and_nitrites"))
+}
+```
+
+## Overview
+
+```{r}
+nutrients |> 
+  filter(conc > 0) |> 
+  ggplot(aes(x = conc, fill = formula)) +
+  geom_density(color = "black", alpha = .5) +
+  scale_fill_discrete(labels = labels_formula) +
+  scale_x_log10(labels = scales::label_number()) +
+  labs(x = "concentration (μM)", fill = "", color = "") +
+  theme_classic() +
+  theme(legend.position = "inside", legend.position.inside = c(.2, .7))
+```
+
+## Organic nutrients distribution
+
+```{r}
+nutrients |>
+  filter(conc > 0) |> 
+  filter_organic() |> 
+  ggplot(aes(y = fct_rev(location), x = conc)) +
+  geom_boxplot(outliers = F) +
+  geom_jitter(alpha = .3, width = .3) +
+  facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
+  scale_y_discrete(labels = labels_location) +
+  scale_x_log10() +
+  labs(x = "concentration (μM)", y = "") +
+  theme_classic()
+```
+
+```{r}
+nutrients |> 
+  filter_organic() |> 
+  filter_analysis() |> 
+  ggplot(aes(x = date, conc, shape = location, color = location)) +
+  geom_point() +
+  facet_wrap(
+    ~ formula, nrow = 2, scale = "free_y", labeller = as_labeller(labels_formula)
+  ) +
+  scale_shape_discrete(labels = labels_location) +
+  scale_color_discrete(labels = labels_location) +
+  scale_y_log10() +
+  labs(y = "concentration (μM)", shape = "", color = "") +
+  theme_classic() +
+  theme(axis.title.x = element_blank(), legend.position = "bottom")
+```
+
+
+```{r}
+nutrients |> 
+  filter_organic() |> 
+  filter_analysis() |> 
+  ggplot(aes(x = season, conc)) +
+  geom_boxplot(outliers = F) +
+  facet_wrap(
+    ~ formula, nrow = 2, scale = "free_y",
+    labeller = as_labeller(labels_formula)
+    ) +
+  geom_jitter(alpha = .3, width = .3) +
+  scale_x_discrete(labels = labels_season) +
+  scale_y_log10() +
+  labs(x = "", y = "concentration (μM)") +
+  theme_classic()
+```
+
+```{r}
+nutrients |> 
+  filter_organic() |> 
+  filter_analysis() |> 
+  ggplot(aes(x = season, conc)) +
+  geom_boxplot(outliers = F) +
+  facet_grid(
+    location ~ formula, scale = "free_y",
+    labeller = as_labeller(c(labels_formula, labels_location))
+  ) +
+  geom_jitter(alpha = .3, width = .3) +
+  scale_x_discrete(labels = labels_season) +
+  scale_y_log10() +
+  labs(x = "", y = "concentration (μM)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 20, vjust = .5))
+```
+
+## Inorganic nutrients distribution
+
+```{r}
+nutrients |>
+  filter(conc > 0) |> 
+  filter_inorganic() |> 
+  ggplot(aes(y = location, x = conc)) +
+  geom_boxplot(outliers = F) +
+  facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
+  scale_y_discrete(labels = labels_location) +
+  scale_x_log10() +
+  labs(x = "concentration (μM)", y = "") +
+  theme_classic()
+```
+
+```{r}
+nutrients |> 
+  filter(conc > 0) |> 
+  filter_inorganic() |> 
+  filter_analysis() |> 
+  ggplot(aes(x = date, conc, shape = location, color = location)) +
+  geom_jitter() +
+  facet_wrap(
+    ~ formula, nrow = 2, scale = "free_y", labeller = as_labeller(labels_formula)
+  ) +
+  scale_shape_discrete(labels = labels_location) +
+  scale_color_discrete(labels = labels_location) +
+  scale_y_log10() +
+  labs(y = "concentration (μM)", shape = "", color = "") +
+  theme_classic() +
+  theme(axis.title.x = element_blank(), legend.position = "bottom")
+```
+
+```{r}
+nutrients |> 
+  filter(conc > 0) |> 
+  filter_inorganic() |> 
+  filter_analysis() |> 
+  ggplot(aes(x = season, conc)) +
+  geom_boxplot(outliers = F) +
+  facet_wrap(
+    ~ formula, nrow = 2, scale = "free_y", labeller = as_labeller(labels_formula)
+  ) +
+  geom_jitter(alpha = .3, width = .3) +
+  scale_x_discrete(labels = labels_season) +
+  scale_y_log10() +
+  labs(x = "", y = "concentration (μM)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 20, vjust = .5))
+```
+
+```{r}
+nutrients |> 
+  filter(conc > 0) |> 
+  filter_inorganic() |> 
+  filter_analysis() |> 
+  ggplot(aes(x = season, conc)) +
+  geom_boxplot(na.rm = T, outliers = F) +
+  facet_grid(
+    location ~ formula, scale = "free",
+    labeller = as_labeller(c(labels_formula, labels_location))
+  ) +
+  geom_jitter(na.rm = T, alpha = .3, width = .3) +
+  scale_x_discrete(labels = labels_season) +
+  scale_y_log10() +
+  labs(x = "", y = "concentration (μM)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+

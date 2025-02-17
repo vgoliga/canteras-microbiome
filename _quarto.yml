@@ -1,0 +1,43 @@
+project:
+  type: website
+  output-dir: _site
+
+execute: 
+  freeze: auto
+
+author:
+  name: "Vera Gómez-Limón Gallardo"
+  email: vera.gomez101@alu.ulpgc.es
+date: last-modified
+toc: true
+
+bibliography: refs.bib
+
+website:
+  title: "Canteras Microbiome"
+  page-footer:
+    right: |
+      This website was built with <a href="https://quarto.org/">Quarto</a>.
+  repo-url: https://github.com/averrasion
+  repo-actions: [edit]
+  sidebar:
+    style: floating
+    contents:
+      - index.qmd
+      - section: "Observations"
+        contents: 
+          - observations/temperatures.qmd
+          - observations/nutrients.qmd
+          - observations/cells.qmd
+          - observations/enterococci.qmd
+          - section: "Amplicon Sequence Variants"
+            href: observations/asv/samples.qmd
+            contents: 
+              - observations/asv/prokaryotes.qmd
+              - observations/asv/eukaryotes.qmd
+              - observations/asv/bacterial-indexes.qmd
+format:
+  html:
+    theme:
+      - cosmo
+      - brand

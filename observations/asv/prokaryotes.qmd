@@ -1,0 +1,74 @@
+---
+title: "Prokaryotes"
+---
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(here)
+
+source(here("utils.R"))
+
+samples <- 
+  read_csv(
+    here("data", "samples.csv"),
+    col_types = cols(location = col_factor(levels = locations))
+  ) |>
+  mutate(date = make_datetime(year, month, day)) |> 
+  make_seasons()
+
+prokaryotes <- 
+  read_csv(here("data", "prokaryotes.csv")) |> 
+  left_join(samples, by = join_by(sample)) |> 
+  group_by(asv) |> 
+  mutate(encounters = n(), .after = asv) |> 
+  mutate(encounter_rate = encounters / 47, .after = encounters) |> 
+  ungroup() |> 
+  mutate(
+    rarity = 
+      encounters |> case_match(1 ~ "singular", 47 ~ "ubiquitous", .default = "recurring"),
+    rarity = rarity |> fct(levels = c("singular", "recurring", "ubiquitous")),
+    .after = encounter_rate
+  ) |> 
+  group_by(sample) |> 
+  mutate(p = reads / sum(reads), .after = reads) |> 
+  ungroup()
+```
+
+## Overview
+
+```{r}
+prokaryotes |> 
+  filter_analysis() |> 
+  mutate(order = fct_lump_n(order, 11)) |> 
+  group_by(season, order) |> 
+  summarize(reads = sum(reads), .groups = "drop_last") |> 
+  mutate(pi = reads / sum(reads)) |> 
+  ggplot(aes(x = season, y = pi, fill = order)) +
+  scale_fill_brewer(palette = "Set3") +
+  geom_col(color = "black", linewidth = .3) +
+  scale_x_discrete(labels = labels_season) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(x = "", y = "relative abundance", fill = "") +
+  theme_classic()
+```
+
+```{r}
+prokaryotes |> 
+  filter_analysis() |> 
+  mutate(order = fct_lump_n(order, 11)) |> 
+  group_by(location, order) |> 
+  summarize(reads = sum(reads), .groups = "drop_last") |> 
+  mutate(p = reads / sum(reads)) |> 
+  ggplot(aes(x = p, y = fct_rev(location), fill = order)) +
+  scale_fill_brewer(palette = "Set3") +
+  geom_col(color = "black", linewidth = .3) +
+  scale_y_discrete(labels = labels_location) +
+  scale_x_continuous(labels = scales::percent) +
+  labs(x = "relative abundance", fill = "", y = "") +
+  theme_classic() +
+  theme()
+```
+

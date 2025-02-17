@@ -1,0 +1,102 @@
+---
+title: "Bacterial indexes"
+---
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(here)
+
+source(here("utils.R"))
+
+samples <- 
+  read_csv(
+    here("data", "samples.csv"),
+    col_types = cols(location = col_factor(levels = locations))
+  ) |>
+  mutate(date = make_datetime(year, month, day)) |> 
+  make_seasons()
+
+indexes <-
+  read_csv(here("data", "prokaryotes.csv")) |> 
+  left_join(samples, by = join_by(sample)) |> 
+  group_by(sample, location, date, season) |> 
+  summarize(
+    alpha           = sum(reads[class    == "Alphaproteobacteria"], na.rm = T),
+    gamma           = sum(reads[class    == "Gammaproteobacteria"], na.rm = T),
+    alteromonas     = sum(reads[genus    == "Alteromonas"],         na.rm = T),
+    sar11           = sum(reads[order    == "SAR11 clade"],         na.rm = T),
+    oceanospirillum = sum(reads[order    == "Oceanospirillum"],     na.rm = T),
+    bacteroidetes   = sum(reads[phylum   == "Bacteroidota"],        na.rm = T),
+    nitrospira      = sum(reads[phylum   == "Nitrospirota"],        na.rm = T),
+    burkholderiales = sum(reads[order    == "Burkholderiales"],     na.rm = T),
+    bacilli         = sum(reads[class    == "Bacilli"],             na.rm = T),
+    clostridia      = sum(reads[class    == "Clostridia"],          na.rm = T)
+  ) |> 
+  mutate(
+    index_ag   = (alpha) / gamma,
+    index_as   = (alteromonas) / sar11,
+    index_aos  = (alteromonas + oceanospirillum) / sar11,
+    index_bngb = (bacteroidetes + nitrospira + gamma) / burkholderiales,
+    index_bbca = (bacilli + bacteroidetes + clostridia) / alpha
+  ) |> 
+  pivot_longer(starts_with("index"), names_to = "index", names_prefix = "index_")
+```
+
+## Overview
+
+```{r}
+indexes |> 
+  filter(value > 0) |> 
+  ggplot(aes(x = value, fill = index)) +
+  geom_density(color = "black", alpha = .5) +
+  labs(x = "", y = "Density", fill = "", color = "") +
+  scale_x_log10() +
+  scale_fill_discrete(labels = labels_index) +
+  theme_classic() +
+  theme(legend.position = "inside", legend.position.inside = c(.2, .7))
+```
+
+### Distribution
+
+```{r}
+indexes |>
+  filter(value > 0) |> 
+  filter_analysis() |> 
+  ggplot(aes(y = fct_rev(location), x = value)) +
+  geom_boxplot(outliers = F) +
+  facet_wrap(~ index, scales = "free_x", labeller = as_labeller(labels_index)) +
+  scale_y_discrete(labels = labels_location) +
+  labs(x = "", y = "") +
+  theme_classic()
+```
+
+```{r}
+indexes |>
+  filter(value > 0) |> 
+  filter_analysis() |> 
+  ggplot(aes(x = date, y = value, shape = location, color = location)) +
+  geom_jitter() +
+  facet_wrap(~ index, scales = "free_y", labeller = as_labeller(labels_index)) +
+  scale_color_discrete(labels = labels_location) +
+  scale_shape_discrete(labels = labels_location) +
+  labs(x = "", y = "", shape = "", color = "") +
+  theme_classic() +
+  theme(legend.position = "inside", legend.position.inside = c(.85, .25))
+```
+
+```{r}
+indexes |>
+  filter(value > 0) |> 
+  filter_analysis() |> 
+  ggplot(aes(x = season, y = value)) +
+  geom_boxplot(outliers = F) +
+  facet_wrap(~ index, scales = "free_y", labeller = as_labeller(labels_index)) +
+  scale_x_discrete(labels = labels_season) +
+  labs(x = "", y = "", shape = "", color = "") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
