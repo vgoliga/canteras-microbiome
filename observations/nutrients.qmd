@@ -16,7 +16,7 @@ nutrients <-
     here("data", "nutrients.csv"),
     col_types = cols(location = col_factor(levels = locations), formula = col_factor())
   ) |> 
-  make_seasons()
+  mutate(season = make_season(date))
 
 filter_organic <- function(data){
   data |> filter(formula %in% c("toc", "ton"))

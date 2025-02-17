@@ -14,11 +14,8 @@ library(here)
 source(here("_common.R"))
 
 temperatures <- 
-  read_csv(
-    here("data", "temperatures.csv"),
-    col_types = cols(location = col_factor(levels = locations))
-  ) |> 
-  make_seasons()
+  read_csv(here("data", "temperatures.csv"), col_types = cols(location = col_factor(levels = locations))) |> 
+  mutate(season = make_season(date))
 ```
 
 ## Temperature distribution

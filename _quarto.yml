@@ -25,6 +25,7 @@ website:
     contents:
       - index.qmd
       - section: "Observations"
+        href: observations/temperatures.qmd
         contents: 
           - observations/temperatures.qmd
           - observations/nutrients.qmd
@@ -33,11 +34,19 @@ website:
           - section: "Amplicon Sequence Variants"
             href: observations/asv/samples.qmd
             contents: 
-              - observations/asv/prokaryotes.qmd
-              - observations/asv/eukaryotes.qmd
-              - observations/asv/bacterial-indexes.qmd
+              - observations/asv/samples.qmd
+              - observations/asv/overview.qmd
+              - section: "Community Composition"
+                contents: 
+                - observations/asv/prokaryotes.qmd
+                - observations/asv/eukaryotes.qmd
+              - section: "Indicator Indexes"
+                contents: 
+                - observations/asv/bacterial-indexes.qmd
 format:
   html:
     theme:
       - cosmo
       - brand
+    toc: true
+    number-sections: true

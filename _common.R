@@ -13,24 +13,16 @@ filter_analysis <- function(data){
 
 seasons_limits <- seq(ymd("2021-12-01"), ymd("2023-06-01"), by = "3 month") |> as_datetime()
 
-make_seasons <- function(data){
-  seasons <- 
-    c(
-      "2021-winter",
-      "2022-spring", "2022-summer", "2022-autumn", "2022-winter",
-      "2023-spring"
-    )
+make_season <- function(date){
+  seasons <- c("2021-winter", "2022-spring", "2022-summer", "2022-autumn", "2022-winter", "2023-spring")
   
   match_season <- function(x) {
     idx = which(x >= seasons_limits) |> last()
     if_else(is.na(idx), NA, seasons[idx])
   }
   
-  data |> 
-    mutate(
-      season = 
-        date |> map_chr(match_season) |> fct(levels = seasons)
-    )
+  date |> map_chr(match_season) |> fct(levels = seasons)
+  
 }
 
 # Labels -----

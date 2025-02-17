@@ -1,0 +1,336 @@
+---
+title: "Data Overview"
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+#| output: false
+
+Sys.setlocale("LC_TIME", "en_US.utf8")
+
+library(tidyverse)
+library(osmdata)
+library(gt)
+library(here)
+
+source(here("_common.R"))
+
+samples <-
+  read_csv(here("data", "samples.csv"), col_types = cols(location = col_factor(levels = locations))) |> 
+  mutate(date = make_datetime(year, month, day)) |> 
+  mutate(season = make_season(date))
+
+prokaryotes <-
+  read_csv(here("data", "prokaryotes.csv")) |>
+  mutate(community = "Prokaryotic", .before = 1)
+
+eukaryotes <-
+  read_csv(here("data", "eukaryotes.csv")) |>
+  mutate(community = "Eukaryotic", .before = 1)
+
+taxa <- 
+  prokaryotes |>
+  bind_rows(eukaryotes) |>
+  left_join(samples, by = join_by(sample)) |> 
+  group_by(community, asv) |> 
+  mutate(encounters = n(), .after = asv) |> 
+  mutate(encounter_rate = encounters / 47, .after = encounters) |> 
+  ungroup() |> 
+  mutate(
+    rarity = 
+      encounters |> case_match(1 ~ "singular", 47 ~ "ubiquitous", .default = "recurring"),
+    rarity = rarity |> fct(levels = c("singular", "recurring", "ubiquitous")),
+    .after = encounter_rate
+  ) |> 
+  group_by(community, sample) |> 
+  mutate(p = reads / sum(reads), .after = reads) |> 
+  ungroup()
+```
+
+Target genome region during polymerase chain reaction (PCR) divides the data into two major communities. These regions of rRNA are 16S and 18S, which correspond to prokaryotic and eukaryotic ribosomes, respectively.
+
+## Encounters and rarity
+
+Amplicon sequence variants (ASVs) represent the fundamental observational units of the database and can be mapped to individual taxa. Encounters refer to the number of samples in which a taxon was found, ranging between a maximum of 47 encounters ---as there is such total number of samples--- and 1. Encounters are indicative of taxon rarity: ASVs encountered many times are considered common while those encountered a few times are considered uncommon.
+
+```{r}
+#| label: fig-encounters
+#| fig-cap: Number of taxa by their encounter count. Vertical axis in logarithmic scale
+
+taxa |>
+  count(community, asv) |> 
+  ggplot(aes(x = n)) +
+  geom_bar() +
+  facet_wrap(~ community, ncol = 1) +
+  scale_x_continuous(breaks = seq(1, 47, 2)) +
+  scale_y_log10() +
+  labs(x = "encounters", y = "taxa (n)") +
+  theme_classic()
+```
+
+Taxa were classified into three broad rarity categories: `singular` are taxa found in a single sample during the entire monitoring period, `recurring` are found in some samples and `ubiquitous` in every sample.
+
+Bacterial taxonomic diversity is immense. Out of the 30,690 taxa identified, roughly 85% were singular, whereas only 0,07% of taxa were ubiquitous. A similar pattern occurs in eukaryotic organisms (@tbl-rarity). Each time a new taxon was identified, the chances of encountering it again in another sample were very low.
+
+```{r}
+#| label: tbl-rarity
+#| tbl-cap: Counts of the number of taxa in each rarity category
+#| tbl-cap-location: bottom
+
+taxa <- 
+  taxa |> 
+  mutate(
+    rarity = encounters |> case_match(1 ~ "singular", 47 ~ "ubiquitous", .default = "recurring"),
+    rarity = rarity |> fct(levels = c("singular", "recurring", "ubiquitous")),
+    .after = encounter_rate
+  )
+
+taxa |> 
+  count(community, rarity, asv) |> 
+  count(community, rarity) |> 
+  mutate(pct = n / sum(n), .by = community) |> 
+  gt(rowname_col = "encounters", groupname_col = "community", row_group_as_column = T) |> 
+  cols_label(
+    rarity = md("**Rarity**"),
+    n = md("**Taxa (n)**"),
+    pct = md("**% of total**")
+  ) |> 
+  cols_align(align = "left") |> 
+  fmt_percent(columns = pct) |> 
+  summary_rows(columns = n, fns = list(total = ~ sum(.))) |> 
+  summary_rows(columns = pct, fns = list(total = ~ sum(.)), fmt = ~ fmt_percent(.)) |> 
+  tab_style(style = cell_text(v_align = "middle"), locations = cells_row_groups()) |> 
+  tab_options(table.width = pct(100), summary_row.text_transform = "uppercase")
+```
+
+## Reads and relative abundance
+
+The number of reads each taxon has is directly related to its abundance within each particular sample. Relative abundance is preferred over reads because not all samples contained the same number of total ASV reads as shown in @fig-reads. This inconsistency can be misleading when comparing data from different samples.
+
+```{r}
+#| label: fig-reads
+#| fig-cap: All samples ordered by their total ASV reads.
+
+taxa |> 
+  count(community, sample, season, wt = reads) |> 
+  ggplot(aes(x = sample, y = n)) +
+  geom_col() +
+  facet_wrap(~ community, nrow = 2) +
+  labs(y = "reads") +
+  theme_classic() +
+  theme(axis.title.x = element_blank(), axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
+Relative abundance is easily computed by dividing the number of reads of a certain taxon by the total ASV reads within the sample. @fig-violin shows that, overall, rarer taxa are less abundant. Note that, as stated above, there are far more data points in singular and recurring categories than in the ubiquitous category. The upper tails in singular and recurring distributions indicate exceptional cases where rare taxa become predominant in the sample. Samples dominated by rare taxa may indicate a community response to environmental changes, perhaps triggered by fecal contamination.
+
+```{r}
+#| label: fig-violin
+#| fig-cap: Violin plot showing the distribution of taxon relative abundance by rarity. All data points are represented, with close to 10⁵ observations.
+
+taxa |> 
+  ggplot(aes(x = rarity, y = p)) +
+  geom_violin() +
+  facet_wrap(~ community, ncol = 1) +
+  scale_y_log10(labels = scales::label_number()) +
+  labs(y = "relative abundance") +
+  theme_classic() +
+  theme(axis.title.x = element_blank())
+```
+### Singular taxa distribution
+
+```{r}
+taxa |> 
+  filter(rarity == "singular") |> 
+  filter_analysis() |> 
+  count(community, sample, date, location, wt = p, name = "p") |> 
+  ggplot(aes(x = p, y = fct_rev(location), fill = community)) +
+  geom_boxplot(outliers = F) +
+  scale_y_discrete(labels = labels_location) +
+  labs(x = "relative abundance of singular taxa", y = "", fill = "", color = "") +
+  theme_classic()
+```
+```{r}
+taxa |> 
+  filter(rarity == "singular") |> 
+  filter_analysis() |> 
+  count(community, sample, date, location, wt = p, name = "p") |> 
+  ggplot(aes(x = date, y = p, shape = community, color = community)) +
+  geom_jitter() +
+  scale_shape_discrete(labels = labels_location) +
+  scale_color_discrete(labels = labels_location) +
+  labs(x = "", y = "relative abundance of singular taxa", color = "", shape = "") +
+  theme_classic() +
+  theme(legend.position = "inside", legend.position.inside = c(.1, .9))
+```
+```{r}
+taxa |> 
+  filter(rarity == "singular") |> 
+  filter_analysis() |> 
+  count(community, sample, date, location, season, wt = p, name = "p") |> 
+  ggplot(aes(x = season, y = p, fill = community)) +
+  geom_boxplot(outliers = F) +
+  scale_x_discrete(labels = labels_season) +
+  labs(x = "", y = "relative abundance of ubiquitous taxa") +
+  theme_classic()
+```
+### Ubiquitous distribution
+
+```{r}
+taxa |> 
+  filter(rarity == "ubiquitous") |> 
+  filter_analysis() |> 
+  count(community, sample, date, location, wt = p, name = "p") |> 
+  ggplot(aes(x = p, y = fct_rev(location), fill = community)) +
+  geom_boxplot(outliers = F) +
+  geom_jitter(aes(color = community), alpha = .3) +
+  scale_y_discrete(labels = labels_location) +
+  labs(x = "relative abundance of ubiquitous taxa", y = "", fill = "", color = "") +
+  theme_classic()
+```
+
+```{r}
+taxa |> 
+  filter(rarity == "ubiquitous") |> 
+  filter_analysis() |> 
+  count(community, sample, date, location, wt = p, name = "p") |> 
+  ggplot(aes(x = date, y = p, shape = community, color = community)) +
+  geom_jitter() +
+  scale_shape_discrete(labels = labels_location) +
+  scale_color_discrete(labels = labels_location) +
+  labs(x = "", y = "relative abundance of ubiquitous taxa", color = "", shape = "") +
+  theme_classic()
+```
+```{r}
+taxa |> 
+  filter(rarity == "ubiquitous") |> 
+  filter_analysis() |> 
+  count(community, sample, date, location, season, wt = p, name = "p") |> 
+  ggplot(aes(x = season, y = p, fill = community)) +
+  geom_boxplot(outliers = F) +
+  geom_jitter(aes(color = community), alpha = .3) +
+  scale_x_discrete(labels = labels_season) +
+  labs(x = "", y = "relative abundance of ubiquitous taxa") +
+  theme_classic()
+```
+
+### Recurring subdivision
+
+Because there are so many they will be subdivided
+
+```{r}
+taxa |> 
+  filter(rarity == "recurring") |> 
+  filter_analysis() |> 
+  count(
+    community, sample, date, location,
+    bins = encounter_rate |> cut_width(.25, center = .25/2),
+    wt = p, name = "p") |> 
+  ggplot(aes(x = p, y = fct_rev(location), fill = bins)) +
+  geom_boxplot(outliers = F) +
+  facet_wrap(~ community, scales = "free_x") +
+  scale_y_discrete(labels = labels_location) +
+  labs(x = "relative abundance of recurring taxa", y = "", fill = "Encounter rate") +
+  theme_classic() +
+  theme(legend.position = "bottom")
+```
+```{r}
+taxa |> 
+  filter(rarity == "recurring") |> 
+  filter_analysis() |> 
+  count(
+    community, sample, date, location,
+    bins = encounter_rate |> cut_width(.25, center = .25/2),
+    wt = p, name = "p") |> 
+  ggplot(aes(x = date, y = p, shape = bins, color = bins)) +
+  geom_jitter() +
+  facet_wrap(~ community) +
+  labs(x = "", y = "relative abundance of recurring taxa", color = "", shape = "") +
+  theme_classic()
+```
+```{r}
+taxa |> 
+  filter(community == "Eukaryotic") |> 
+  filter_analysis() |> 
+  count(
+    sample, season, location,
+    bins = encounter_rate |> cut_width(.25, center = .25/2),
+    wt = reads, name = "reads") |> 
+  ggplot(aes(x = bins, y = reads)) +
+  geom_boxplot(outliers = F) +
+  geom_jitter(alpha = .3, width = .3) +
+  facet_grid(
+    location ~ season,
+    scales = "free_y",
+    labeller = as_labeller(c(labels_location, labels_season))
+    ) +
+  labs(x = "", y = "reads", fill = "Encounter rate") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+```{r}
+taxa |> 
+  filter(community == "Prokaryotic") |> 
+  filter_analysis() |> 
+  count(
+    sample, season, location,
+    bins = encounter_rate |> cut_width(.25, center = .25/2),
+    wt = reads, name = "reads") |> 
+  ggplot(aes(x = bins, y = reads)) +
+  geom_boxplot(outliers = F) +
+  geom_jitter(alpha = .3, width = .3) +
+  facet_grid(
+    location ~ season,
+    scales = "free_y",
+    labeller = as_labeller(c(labels_location, labels_season))
+    ) +
+  labs(x = "", y = "reads", fill = "Encounter rate") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+```{r}
+taxa |> 
+  filter(community == "Eukaryotic") |> 
+  filter_analysis() |> 
+  count(
+    sample, season, location,
+    bins = encounter_rate |> cut_width(.25, center = .25/2),
+    wt = reads, name = "reads") |> 
+  ggplot(aes(x = sample, y = reads, fill = bins)) +
+  geom_col(position = "fill") +
+  facet_wrap(~ season, scales = "free_x", labeller = as_labeller(c(labels_location, labels_season))) +
+  labs(x = "", y = "reads", fill = "Encounter rate") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+```{r}
+taxa |> 
+  filter(community == "Prokaryotic") |> 
+  filter_analysis() |> 
+  count(
+    sample, season, location,
+    bins = encounter_rate |> cut_width(.25, center = .25/2),
+    wt = reads, name = "reads") |> 
+  ggplot(aes(x = sample, y = reads, fill = bins)) +
+  geom_col(position = "fill") +
+  facet_wrap(~ season, scales = "free_x", labeller = as_labeller(c(labels_location, labels_season))) +
+  labs(x = "", y = "reads", fill = "Encounter rate") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+```{r}
+taxa |> 
+  filter(community == "Eukaryotic") |> 
+  filter_analysis() |> 
+  count(
+    sample, season, location,
+    bins = encounter_rate |> cut_width(.25, center = .25/2),
+    wt = reads, name = "reads") |> 
+  ggplot(aes(x = sample, y = reads, fill = bins)) +
+  geom_col(position = "fill") +
+  facet_wrap(~ location, scales = "free_x", labeller = as_labeller(c(labels_location, labels_season))) +
+  labs(x = "", y = "reads", fill = "Encounter rate") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```

@@ -12,12 +12,9 @@ library(here)
 source(here("_common.R"))
 
 samples <- 
-  read_csv(
-    here("data", "samples.csv"),
-    col_types = cols(location = col_factor(levels = locations))
-  ) |>
+  read_csv(here("data", "samples.csv"), col_types = cols(location = col_factor(levels = locations))) |>
   mutate(date = make_datetime(year, month, day)) |> 
-  make_seasons()
+  mutate(season = make_season(date))
 
 prokaryotes <- 
   read_csv(here("data", "prokaryotes.csv")) |> 

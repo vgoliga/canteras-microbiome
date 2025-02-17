@@ -13,17 +13,14 @@ Sys.setlocale("LC_TIME", "en_US.utf8")
 
 source(here("_common.R"))
 
-samples <-
-  read_csv(
-    here("data", "samples.csv"),
-    col_types = cols(location = col_factor(levels = locations))
-  ) |> 
+samples <- 
+  read_csv(here("data", "samples.csv"), col_types = cols(location = col_factor(levels = locations))) |>
   mutate(date = make_datetime(year, month, day)) |> 
-  make_seasons()
+  mutate(season = make_season(date))
 
 enterococci <- 
   read_csv(here("data", "enterococci.csv")) |> 
-  make_seasons()
+  mutate(season = make_season(date))
 ```
 
 ## Temporal distribution
