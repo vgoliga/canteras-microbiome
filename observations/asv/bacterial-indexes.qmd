@@ -41,12 +41,12 @@ indexes <-
   pivot_longer(starts_with("index"), names_to = "index", names_prefix = "index_")
 ```
 
-| Index                | Formula                                                                                                | Reference      |
-|----------------------|:------------------------------------------------------------------------------------------------------:|----------------|
-| Alte.:SAR11          | $\frac{\text{Alteromonas}}{\text{SAR11}}$                                                              | [@ferrera2016] |
-| (Alte.+Ocea.):SAR11  | $\frac{\text{Alteromonas}+\text{Oceanospirillum}}{\text{SAR11}}$                                       | [@ferrera2016] |
-| (Bact.+Nitr.+γ):β    | $\frac{\text{Bacteroidetes}+\text{Nitrospira}+\text{Gammaproteobacteria}}{\text{Betaproteobacteria}}$  | [@garrido2014] |
-| (Baci+Bact+Clo):α    |  $\frac{\text{Bacilli}+\text{Bacteroidetes}+\text{Clostridia}}{\text{Alphaproteobacteria}}$            |  [@wu2010]     |
+| Index | Formula | Reference |
+|-------|:--------------------------:|------------------|
+| A:S   | $\frac{\text{Alteromonas}}{\text{SAR11}}$                                          | [@ferrera2016] |
+| AO:S  | $\frac{\text{Alteromonas+Oceanospirillum}}{\text{SAR11}}$                          | [@ferrera2016] |
+| BNγ:β | $\frac{\text{Bacteroidetes+Nitrospira+γ-Proteobacteria}}{\text{β-Proteobacteria}}$ | [@garrido2014] |
+| BBC:α |  $\frac{\text{Bacilli+Bacteroidetes+Clostridia}}{\text{α-Proteobacteria}}$         | [@wu2010]      |
  
 ## Overview
 
