@@ -25,6 +25,13 @@ make_season <- function(date){
   
 }
 
+mutate_asv_rarity <- function(data){
+  data |> 
+    mutate(encounters = n(), .after = asv, .by = asv) |> 
+    mutate(probability_pct = encounters /max(encounters) * 100, .after = encounters) |> 
+    mutate(rarity = probability_pct |> cut_width(25, center = 25/2), .after = probability_pct)
+}
+
 # Labels -----
 
 labels_location <- 
