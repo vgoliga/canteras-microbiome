@@ -64,7 +64,7 @@ samples |>
 ```
 ## Dates and seasons
 
-Due to the sporadic nature of contamination events and their possibly limited environmental persistence, understanding the temporal distribution of the samples is crucial for the analysis. Moreover, due to the fact that microbial data will be compared across variables from other databases ---[Nutrients](/observations/nutrients.qmd), [Cells](/observations/cells.qmd), etc.---, some temporal binning has to be made. Seasonal three-months intervals were computed from November 2021 to May 2023. This arbitrary segmentation is intended to balance temporal resolution and data availability.
+Due to the sporadic nature of contamination events and their possibly limited environmental persistence, understanding the temporal distribution of the samples is crucial for the analysis. Moreover, due to the fact that microbial data will be compared across variables from other databases ---[Nutrients](/nutrients.qmd), [Cells](/cells.qmd), etc.---, some temporal binning has to be made. Seasonal three-months intervals were computed from November 2021 to May 2023. This arbitrary segmentation is intended to balance temporal resolution and data availability.
 
 ```{r}
 samples |> 
