@@ -11,10 +11,11 @@ filter_analysis <- function(data){
     filter(!is.na(season))
 }
 
-seasons_limits <- seq(ymd("2021-12-01"), ymd("2023-06-01"), by = "3 month") |> as_datetime()
+seasons_limits <- seq(ymd("2021-10-01"), ymd("2023-07-01"), by = "3 month") |> as_datetime()
 
 make_season <- function(date){
-  seasons <- c("2021-winter", "2022-spring", "2022-summer", "2022-autumn", "2022-winter", "2023-spring")
+  seasons <- 
+    c("2021-autumn", "2021-winter", "2022-spring", "2022-summer", "2022-autumn", "2022-winter", "2023-spring")
   
   match_season <- function(x) {
     idx = which(x >= seasons_limits) |> last()
@@ -47,6 +48,7 @@ labels_location <-
 
 labels_season <- 
   c(
+    "2021-autumn" = "Aut 2021",
     "2021-winter" = "Win 2021",
     "2022-spring" = "Spr 2022",
     "2022-summer" = "Sum 2022",

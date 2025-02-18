@@ -4,6 +4,7 @@ title: "Sea Surface Temperature"
 
 ```{r}
 #| label: setup
+#| output: false
 #| message: false
 
 Sys.setlocale("LC_TIME", "en_US.utf8")
@@ -18,29 +19,50 @@ temperatures <-
   mutate(season = make_season(date))
 ```
 
-## Temperature distribution
+## Introduction
+
+When it comes to environmental variables, temperature is often one of the most defining of environmental conditions, and also, one of the easiest to measure. Understanding sea surface temperature (SST) distribution across of monitoring program can help us understand natural fluctuations in the microbiome composition due to seasonal changes in the water. Visit [Sample Metadata](samples.qmd) for further information of the temporal and spacial framework of the project.
+
+## Spatial distribution
+
+Although we generally understand the sea surface as mostly homogeneous in temperature at a local scale, morphological and bathymetrical factors can possibly create spatial differences in distributions. Las Canteras beach is partially closed to the open sea by a morphological feature known as *la Barra* [the Barrier]. However, as shown in #fig-sst-spatial, this doesn't seem to be the case from an overview perspective. It's important to note that la Barra is significantly eroded, and open surface waters can reach the closed water mass daily at high tide.
 
 ```{r}
+#| label: fig-sst-spatial
+#| fig-cap: Spatial distribution of sea surface temperature across all environmental monitoring stations.
+
 temperatures |> 
   ggplot(aes(y = fct_rev(location), x = sst)) +
   geom_boxplot(na.rm = T, outliers = F) +
   geom_jitter(na.rm = T, alpha = .3, width = .3) +
   scale_y_discrete(labels = labels_location) +
-  labs(x = "Temperature (ºC)", y = "") +
-  theme_bw()
+  labs(x = "SST (°C)", y = "") +
+  theme_classic()
 ```
 
+## Temporal distribution
+
+When we think about changes in seawater temperature, we tend to relate them with seasonal variations---we enjoy the most bathing in summer! However, there's a common misconception about seasonal SST variation in assuming that higher temperatures as sea occur simultaneously with atmospheric temperatures. This is not exactly the case. As you can observe in @fig-sst-temporal, Lowest annual SST is recorded around the beginning of March, which also marks the arrival of the spring time. Contrarily, the highest temperatures of around 23° C are measured well into September and the beginning of October, commonly associated with the beginning of the autumn. Important to note that the Canary Islands at approximately 28° N of latitude belong to a subtropical climate. Thus, seasonal variations as commonly understood in the template Northern Hemisphere do not apply.
+
 ```{r}
+#| label: fig-sst-temporal
+#| fig-cap: Seasonal-scale distribution of sea surface temperature. Close points represent measurements from different stations with highly similar values.
+
 temperatures |> 
   filter_analysis() |>  
   ggplot(aes(x = date, y = sst)) +
   geom_jitter(na.rm = T) +
-  geom_vline(xintercept = seasons_limits, linetype = "dotted") +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y") +
-  labs(x = "", y = "Temperature (ºC)") +
+  labs(x = "", y = "Temperature (°C)") +
   theme_bw()
 ```
+
+Following the previous explanation, the seasonal grouping of measurements was defined with SST in mind---visit [Sample Metadata](samples.qmd). Seasonal distributions of SST are shown in @fig-sst-seasons, generally in-season variation is less of 1º C except for spring 2022. We could argue that the spring is a season not characterized by a stable temperature range sustained over a period of 3 months. It is better characterized as a period of sharp increase in SST of almost 4º C over the period of 90 days. The same could be said about autumn, although inversely and slightly less sharply. Moreover, comparing winter and summer ranges, we can spot the tendency of summer temperatures lasting longer and more stably than winter temperatures. Summer temperatures mostly resemble a plateau, while winter temperatures are mostly a cold peak---turn to #fig-sst-temporal for visual insight.  This tendency can be attributed to warming climate in the actual context of Climate Change.
+
 ```{r}
+#| label: fig-sst-seasons
+#| fig-cap: Box plots of sea surface temperature seasonal distribution.
+
 temperatures |> 
   filter_analysis() |> 
   ggplot(aes(x = season, y = sst)) +
@@ -48,7 +70,7 @@ temperatures |>
   geom_jitter(na.rm = T, alpha = .3, width = .3) +
   scale_x_discrete(labels = labels_season) +
   scale_y_log10() +
-  labs(x = "", y = "Temperature (ºC)") +
-  theme_bw()
+  labs(x = "", y = "Temperature (°C)") +
+  theme_classic()
 ```
 
