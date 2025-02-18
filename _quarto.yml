@@ -53,3 +53,4 @@ format:
       - brand
     toc: true
     number-sections: true
+    embed-resources: true
