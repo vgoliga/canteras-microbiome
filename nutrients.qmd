@@ -57,12 +57,11 @@ nutrients |>
   geom_density_ridges(aes(fill = formula), alpha = .5, scale = 5, bandwidth = .1, show.legend = F) +
   scale_fill_discrete(labels = labels_formula) +
   scale_x_log10(labels = scales::label_number()) +
-  scale_y_discrete(labels = labels_formula) +
-  labs(x = "Concentration (μM)", y = "") +
+  scale_y_discrete(labels = labels_formula, name = NULL) +
+  labs(x = "Concentration (μM)") +
   coord_cartesian(clip = "off") +
   theme_classic()
 ```
-
 
 ## Distributions
 
@@ -70,10 +69,10 @@ Nutrients were monitored along with [temperature](temperatures.qmd) and [cell ci
 
 ### Organic nutrients
 
-Observing @fig-nutrients-organic-spatial, it is clear at first glance that TOC concentration across the coast is more homogeneous than that of TON. The TOC maximum of Peña la Vieja also stands out. Moving to figure @fig-nutrients-organic-temporal we observe that it was measured at the end of the monitoring period in the spring of 2023.
+Observing @fig-or-space, it is clear at first glance that TOC concentration across the coast is more homogeneous than that of TON. The TOC maximum of Peña la Vieja also stands out. Moving to figure @fig-or-time we observe that it was measured at the end of the monitoring period in the spring of 2023. On the other hand, TON dropped in El Confital 1 and Peña la Vieja between October 2022 and April 2023. This is not the case at Hotel Cristina. Further investigation is needed in order to understand the factors driving these processes.
 
 ```{r}
-#| label: fig-nutrients-organic-spatial
+#| label: fig-or-space
 #| fig-cap: Box plots of organic nutrient spatial distribution across all measuring stations. Horizontal axis in logarithmic scale.
 
 nutrients |>
@@ -81,16 +80,16 @@ nutrients |>
   filter_organic() |> 
   ggplot(aes(y = fct_rev(location), x = conc)) +
   geom_boxplot(aes(fill = formula), outliers = F, show.legend = F) +
-  geom_jitter(aes(color = formula), alpha = .5, show.legend = F) +
+  geom_jitter(alpha = .3, show.legend = F) +
   facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
-  scale_y_discrete(labels = labels_location) +
+  scale_y_discrete(labels = labels_location, name = NULL) +
   scale_x_log10() +
-  labs(x = "concentration (μM)", y = "") +
+  labs(x = "Concentration (μM)") +
   theme_classic()
 ```
 
 ```{r}
-#| label: fig-nutrients-organic-temporal
+#| label: fig-or-time
 #| fig-cap: Organic nutrient temporal distribution. Vertical axis in logarithmic scale.
 
 nutrients |> 
@@ -104,8 +103,8 @@ nutrients |>
   scale_shape_discrete(labels = labels_location) +
   scale_color_discrete(labels = labels_location) +
   scale_y_log10() +
-  scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y") +
-  labs(x = "", y = "concentration (μM)") +
+  scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
+  labs(y = "Concentration (μM)") +
   theme_bw() +
   theme(
     legend.position = "inside", legend.position.inside = c(.1, .3),
@@ -116,8 +115,10 @@ nutrients |>
 
 ### Inorganic nutrients
 
+In both @fig-in-space and @fig-in-time, we can observe a difference between El Confital and Las Canteras. Concretely, Si(OH)₄ and NO₃⁻ + NO₂⁻ concentration are overall higher in Las Canteras compared to El Confital. Within Las Canteras, these nutrients show a decreasing tendency as we move North. This pattern is representative of different land input regimes, whose shaping agents are the ravines located South of Las Canteras. Ravine discharge contains siliceous sediments from volcanic rocks as well as nitrtates. However, in @fig-in-space shows an unusual distribution of NO₃⁻ + NO₂⁻ at Peña la Vieja, which could be an indicator of anthropogenic input of nutrients.
+
 ```{r}
-#| label: fig-nutrients-inorganic-spatial
+#| label: fig-in-space
 #| fig-cap: Box plots of inorganic nutrient spatial distribution across all measuring stations. Horizontal axis in logarithmic scale.
 
 nutrients |>
@@ -125,54 +126,16 @@ nutrients |>
   filter_inorganic() |> 
   ggplot(aes(y = fct_rev(location), x = conc)) +
   geom_boxplot(aes(fill = formula), outliers = F, show.legend = F) +
-  geom_jitter(aes(color = formula), alpha = .5, show.legend = F) +
+  geom_jitter(alpha = .3, show.legend = F) +
   facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
-  scale_y_discrete(labels = labels_location) +
+  scale_y_discrete(labels = labels_location, name = NULL) +
   scale_x_log10() +
-  labs(x = "concentration (μM)", y = "") +
+  labs(x = "Concentration (μM)") +
   theme_classic()
 ```
 
 ```{r}
-#| label: fig-nutrients-organic-seasonal
-#| fig-cap: Box plots of organic nutrient seasonal distribution. Vertical axis in logarithmic scale.
-
-nutrients |> 
-  filter_organic() |> 
-  filter_analysis() |> 
-  ggplot(aes(x = season, conc)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(~ formula, scale = "free_y", labeller = as_labeller(labels_formula)) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
-  scale_y_log10() +
-  labs(x = "", y = "concentration (μM)") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 20, vjust = .5))
-```
-
-```{r}
-#| label: fig-nutrients-organic-detailed
-#| fig-cap: Detailed box plots of organic nutrient distribution. Vertical axis in logarithmic scale.
-
-nutrients |> 
-  filter(conc > 0) |> 
-  filter_organic() |> 
-  filter_analysis() |> 
-  ggplot(aes(x = season, y = conc, fill = location, color = location)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(~ formula, scale = "free_y", labeller = as_labeller(labels_formula)) +
-  scale_x_discrete(labels = labels_season) +
-  scale_color_discrete(labels = labels_location) +
-  scale_fill_discrete(labels = labels_location) +
-  scale_y_log10() +
-  labs(x = "", y = "concentration (μM)", fill = "", color = "") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 20, vjust = .5))
-```
-
-```{r}
-#| label: fig-nutrients-inorganic-temporal
+#| label: fig-in-time
 #| fig-cap: Inorganic nutrient temporal distribution. Vertical axis in logarithmic scale.
 
 nutrients |> 
@@ -186,54 +149,17 @@ nutrients |>
   ) +
   scale_shape_discrete(labels = labels_location) +
   scale_color_discrete(labels = labels_location) +
-  scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y") +
+  scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
   scale_y_log10() +
-  labs(x = "", y = "concentration (μM)", shape = "", color = "") +
+  labs(y = "Concentration (μM)") +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 20, vjust = .5))
+  theme(
+    legend.title = element_blank(), legend.background = element_rect(color = "black", linewidth = .3),
+    axis.text.x = element_text(angle = 20, vjust = .5)
+    )
 ```
 
-```{r}
-#| label: fig-nutrients-inorganic-seasonal
-#| fig-cap: Box plots of inorganic nutrient seasonal distribution across all measuring stations. Vertical axis in logarithmic scale.
+<!-- ## Eutrophization -->
 
-nutrients |> 
-  filter(conc > 0) |> 
-  filter_inorganic() |> 
-  filter_analysis() |> 
-  ggplot(aes(x = season, y = conc)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(
-    ~ formula, nrow = 2, scale = "free_y", labeller = as_labeller(labels_formula)
-  ) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
-  scale_y_log10() +
-  labs(x = "", y = "concentration (μM)") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 20, vjust = .5))
-```
-
-```{r}
-#| label: fig-nutrients-inorganic-detailed
-#| fig-cap: Detailed box plots of inorganic nutrient distribution. Vertical axis in logarithmic scale.
-
-nutrients |> 
-  filter(conc > 0) |> 
-  filter_inorganic() |> 
-  filter_analysis() |> 
-  ggplot(aes(x = season, y = conc, fill = location, color = location)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(~ formula, scales = "free_y", labeller = as_labeller(labels_formula)) +
-  scale_x_discrete(labels = labels_season) +
-  scale_color_discrete(labels = labels_location) +
-  scale_fill_discrete(labels = labels_location) +
-  scale_y_log10() +
-  labs(x = "", y = "concentration (μM)", fill = "", color = "") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 20, vjust = .5))
-```
-## Eutrophization
-
-Locations in Las Canteras beach appear to have overall higher inorganic nutrient concentrations (@fig-nutrients-inorganic-spatial). Hotel Cristina is characterized by relative higher overall nutrient concentrations. An increasing tendency is observed starting in autumn 2022 reaching it maximum in the spring 2023--when our data ends, so it likely increases beyond. This process is unprecedented in the project's scope, we can vaguely interpret it as inputs from the city's sewage system, however further investigation outside this project's scope should be conducted. Visit [Bacterial Indexes](bacterial-indexes.qmd) to explore the response of the bacterial community to these changes.
+<!-- Locations in Las Canteras beach appear to have overall higher inorganic nutrient concentrations (@fig-in-space). Hotel Cristina is characterized by relative higher overall nutrient concentration. An increasing tendency is observed starting in autumn 2022 reaching it maximum in the spring 2023---when our data ends, so it likely increases beyond. This process is unprecedented in the project's scope, we can vaguely interpret it as inputs from the city's sewage system, however further investigation outside this project's scope should be conducted. Visit [Bacterial Indexes](bacterial-indexes.qmd) to explore the response of the bacterial community to these changes. -->
 
