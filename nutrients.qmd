@@ -16,7 +16,13 @@ source(here("_common.R"))
 nutrients <- 
   read_csv(
     here("data", "nutrients.csv"),
-    col_types = cols(location = col_factor(levels = locations), formula = col_factor())
+    col_types = 
+      cols(
+        location = col_factor(levels = locations),
+        formula = col_factor(
+          levels = c("phosphate", "nitrates_and_nitrites", "ammonium", "silicate", "ton", "toc")
+        )
+      )
   ) |> 
   mutate(season = make_season(date))
 
@@ -35,10 +41,10 @@ filter_inorganic <- function(data){
 The environmental availability of certain nutrients on which microbes depend can deeply shape the composition of the microbiome. Chemically speaking, nutrients are very diverse in molecular weight, composition and complexity. In this project we will classify them into two main groups:
 
  - Organic nutrients: Total organic carbon (TOC), and total organic nitrogen (TON).
- - Inorganic nutrients: silicate [Si(OH)₄], phosphate (PO4³⁻), ammonium (NH₄⁺), and inorganic nitrogen (NO₃⁻ + NO₂⁻).
+ - Inorganic nutrients: silicate [Si(OH)₄], phosphate (PO4³⁻), ammonium (NH₄⁺), and nitrogen oxoanions (NO₃⁻ + NO₂⁻).
 
-By observing overall distribution in @fig-nutrients-overview, we can pinpoint an evident difference between organic and inorganic nutrients. That is, organic nutrients concentration ranges are two to three orders of magnitude higher, with TOC close to 100 μM, and TON around 10 μM. This proportion is representative of the Redfield ratio [@redfield1933], which quantifies elemental concentrations of marine organic matter according to the proportion $C:N:P = 106:16:1$. This proportion is highly representative of our data.
-From a statistical perspective, distributions with two clear heaps ---known as *bimodal distributions*--- like those of TON and PO4³⁻ likely represent clearly identifiable environmental states based on nutrient availability. It can be hypothesized that anthropogenic input of nutrient could be a driving factor of such processes.
+By observing overall distribution in @fig-nutrients-overview, we can pinpoint an evident difference between organic and inorganic nutrients. That is, organic nutrients concentration ranges are two to three orders of magnitude higher, with TOC close to 100 μM, and TON around 10 μM. This proportion is representative of the @redfield1933 ratio, which quantifies elemental concentrations of marine organic matter according to the proportion $C:N:P = 106:16:1$. This proportion is highly representative of our data.
+From a statistical perspective, distributions with two clear heaps ---known as *bimodal distributions*--- like those of TON and PO4³⁻ likely represent two clearly distinct environmental states. According to the intention of this project of investigating contamination events, we can make an *a priori* hypothesis stating that anthropocentric input of nutrient is one of the drivers shaping the bimodal distributions.
 
 ```{r}
 #| label: fig-nutrients-overview
@@ -52,10 +58,16 @@ nutrients |>
   scale_x_log10(labels = scales::label_number()) +
   labs(x = "concentration (μM)", fill = "", color = "") +
   theme_classic() +
-  theme(legend.position = "inside", legend.position.inside = c(.15, .7))
+  theme(legend.position = "inside", legend.position.inside = c(.25, .9), legend.direction = "horizontal")
 ```
 
-## Organic nutrients distribution
+## Distributions
+
+Nutrients were monitored along with [temperature](temperatures.qmd) and [cell citometry](cells.qmd). Sampling locations covered the whole length of Las Canteras and El Confital, compared to the more restricted [sampling](samples.qmd) of microbiological data.
+
+### Organic nutrients
+
+Observing @fig-nutrients-organic-spatial, it is clear at first glance that TOC concentration across the coast is more homogeneous than that of TON. The TOC maximum of Peña la Vieja also stands out. Moving to figure @fig-nutrients-organic-temporal we observe that it was measured at the end of the monitoring period in the spring of 2023.
 
 ```{r}
 #| label: fig-nutrients-organic-spatial
@@ -65,8 +77,8 @@ nutrients |>
   filter(conc > 0) |> 
   filter_organic() |> 
   ggplot(aes(y = fct_rev(location), x = conc)) +
-  geom_boxplot(outliers = F) +
-  geom_jitter(alpha = .3, width = .3) +
+  geom_boxplot(aes(fill = formula), outliers = F, show.legend = F) +
+  geom_jitter(aes(color = formula), alpha = .5, show.legend = F) +
   facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
   scale_y_discrete(labels = labels_location) +
   scale_x_log10() +
@@ -84,17 +96,39 @@ nutrients |>
   ggplot(aes(x = date, conc, shape = location, color = location)) +
   geom_jitter(size = 2) +
   facet_wrap(
-    ~ formula, nrow = 2, scale = "free_y", labeller = as_labeller(labels_formula)
+    ~ formula, scale = "free_y", dir = "v", labeller = as_labeller(labels_formula)
   ) +
   scale_shape_discrete(labels = labels_location) +
   scale_color_discrete(labels = labels_location) +
   scale_y_log10() +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y") +
-  labs(y = "concentration (μM)", shape = "", color = "") +
+  labs(x = "", y = "concentration (μM)") +
   theme_bw() +
-  theme(axis.title.x = element_blank(), legend.position = "bottom")
+  theme(
+    legend.position = "inside", legend.position.inside = c(.1, .3),
+    legend.title = element_blank(),
+    legend.background = element_rect(color = "black", linewidth = .2)
+  )
 ```
 
+### Inorganic nutrients
+
+```{r}
+#| label: fig-nutrients-inorganic-spatial
+#| fig-cap: Box plots of inorganic nutrient spatial distribution across all measuring stations. Horizontal axis in logarithmic scale.
+
+nutrients |>
+  filter(conc > 0) |> 
+  filter_inorganic() |> 
+  ggplot(aes(y = fct_rev(location), x = conc)) +
+  geom_boxplot(aes(fill = formula), outliers = F, show.legend = F) +
+  geom_jitter(aes(color = formula), alpha = .5, show.legend = F) +
+  facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
+  scale_y_discrete(labels = labels_location) +
+  scale_x_log10() +
+  labs(x = "concentration (μM)", y = "") +
+  theme_classic()
+```
 
 ```{r}
 #| label: fig-nutrients-organic-seasonal
@@ -136,21 +170,7 @@ nutrients |>
 
 ## Inorganic nutrients distribution
 
-```{r}
-#| label: fig-nutrients-inorganic-spatial
-#| fig-cap: Box plots of inorganic nutrient spatial distribution across all measuring stations. Horizontal axis in logarithmic scale.
 
-nutrients |>
-  filter(conc > 0) |> 
-  filter_inorganic() |> 
-  ggplot(aes(y = fct_rev(location), x = conc)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
-  scale_y_discrete(labels = labels_location) +
-  scale_x_log10() +
-  labs(x = "concentration (μM)", y = "") +
-  theme_classic()
-```
 
 ```{r}
 #| label: fig-nutrients-inorganic-temporal
