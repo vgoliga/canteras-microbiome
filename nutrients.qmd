@@ -9,6 +9,7 @@ title: "Nutrients"
 Sys.setlocale("LC_TIME", "en_US.utf8")
 
 library(tidyverse)
+library(ggridges)
 library(here)
 
 source(here("_common.R"))
@@ -52,14 +53,16 @@ From a statistical perspective, distributions with two clear heaps ---known as *
 
 nutrients |> 
   filter(conc > 0) |> 
-  ggplot(aes(x = conc, fill = formula)) +
-  geom_density(color = "black", alpha = .5) +
+  ggplot(aes(x = conc, y = formula)) +
+  geom_density_ridges(aes(fill = formula), alpha = .5, scale = 5, bandwidth = .1, show.legend = F) +
   scale_fill_discrete(labels = labels_formula) +
   scale_x_log10(labels = scales::label_number()) +
-  labs(x = "concentration (μM)", fill = "", color = "") +
-  theme_classic() +
-  theme(legend.position = "inside", legend.position.inside = c(.25, .9), legend.direction = "horizontal")
+  scale_y_discrete(labels = labels_formula) +
+  labs(x = "Concentration (μM)", y = "") +
+  coord_cartesian(clip = "off") +
+  theme_classic()
 ```
+
 
 ## Distributions
 
@@ -167,10 +170,6 @@ nutrients |>
   theme_classic() +
   theme(axis.text.x = element_text(angle = 20, vjust = .5))
 ```
-
-## Inorganic nutrients distribution
-
-
 
 ```{r}
 #| label: fig-nutrients-inorganic-temporal
