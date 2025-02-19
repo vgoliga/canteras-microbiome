@@ -6,17 +6,13 @@ execute:
   echo: false
   freeze: auto
 
-author:
-  name: "Vera Gómez-Limón Gallardo"
-  email: vera.gomez101@alu.ulpgc.es
-date: last-modified
-toc: true
-
 bibliography: _references.bib
 
 website:
   title: "Canteras Microbiome"
   page-footer:
+    left: |
+      Canteras Microbiome Project Website was created by Vera Gómez-Limón Gallardo.
     right: |
       This website was built with <a href="https://quarto.org/">Quarto</a>.
   repo-url: https://github.com/averrasion/canteras-microbiome
@@ -46,6 +42,7 @@ website:
                 href: bacterial-indexes.qmd
                 contents: 
                 - bacterial-indexes.qmd
+
 format:
   html:
     theme:
