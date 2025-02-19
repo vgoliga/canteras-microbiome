@@ -13,6 +13,9 @@ website:
   page-footer:
     left: |
       Canteras Microbiome Project Website was created by Vera Gómez-Limón Gallardo.
+    center:
+      - text: License
+        href: LICENSE.md
     right: |
       This website was built with <a href="https://quarto.org/">Quarto</a>.
   repo-url: https://github.com/averrasion/canteras-microbiome
