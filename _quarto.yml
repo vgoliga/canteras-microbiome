@@ -20,6 +20,7 @@ website:
       This website was built with <a href="https://quarto.org/">Quarto</a>.
   repo-url: https://github.com/averrasion/canteras-microbiome
   repo-actions: [source]
+  bread-crumbs: true
   sidebar:
     style: floating
     contents:
