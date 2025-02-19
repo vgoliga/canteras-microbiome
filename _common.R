@@ -74,7 +74,7 @@ labels_celltype <-
     "prochloro" = "Prochlorococcus",
     "synecho"   = "Synechococcus",
     "hna"       = "HNA",
-    "lna"       = "HNA"
+    "lna"       = "LNA"
   )
 
 labels_index <- 

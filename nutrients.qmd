@@ -15,16 +15,8 @@ library(here)
 source(here("_common.R"))
 
 nutrients <- 
-  read_csv(
-    here("data", "nutrients.csv"),
-    col_types = 
-      cols(
-        location = col_factor(levels = locations),
-        formula = col_factor(
-          levels = c("phosphate", "nitrates_and_nitrites", "ammonium", "silicate", "ton", "toc")
-        )
-      )
-  ) |> 
+  read_csv(here("data", "nutrients.csv"), col_types = cols(location = col_factor(levels = locations))) |> 
+  mutate(formula = fct(formula) |> fct_reorder(conc, .fun = max, .na_rm = T)) |> 
   mutate(season = make_season(date))
 
 filter_organic <- function(data){

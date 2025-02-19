@@ -4,15 +4,17 @@ title: "Cells"
 
 ```{r}
 #| label: setup
-#| message: false
+#| include: false
 
 library(tidyverse)
+library(ggridges)
 library(here)
 
 source(here("_common.R"))
 
 cells <-
   read_csv(here("data", "cells.csv"), col_types = cols(location = col_factor(levels = locations))) |> 
+  mutate(celltype = fct(celltype) |> fct_reorder(conc, .fun = max, .na.rm = T)) |> 
   mutate(season = make_season(date))
 
 filter_eukaryotes <- function(data){
@@ -28,18 +30,18 @@ filter_nucleic_acid <- function(data){
 }
 ```
 
-## Overview
+## Introduction
 
 ```{r}
 cells |> 
   filter(!is.na(conc) & conc > 0) |> 
-  ggplot(aes(x = conc, fill = celltype)) +
-  geom_density(color = "black", alpha = .5) +
-  scale_fill_discrete(labels = labels_celltype) +
+  ggplot(aes(x = conc, y = celltype)) +
+  geom_density_ridges(aes(fill = celltype), alpha = .5, scale = 3, bandwidth = .09, show.legend = F) +
+  scale_y_discrete(labels = labels_celltype, name = NULL) +
   scale_x_log10(labels = scales::label_number()) +
-  labs(x = "concentration (μM)", fill = "", color = "") +
-  theme_classic() +
-  theme(legend.position = "inside", legend.position.inside = c(.15, .75))
+  coord_cartesian(clip = "off") +
+  labs(x = "Concentration (cells/mL)") +
+  theme_classic()
 ```
 
 ## Eukaryotic plankton distribution
