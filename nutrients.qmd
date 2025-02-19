@@ -4,8 +4,7 @@ title: "Nutrients"
 
 ```{r}
 #| label: setup
-#| message: false
-#| output: false
+#| include: false
 
 Sys.setlocale("LC_TIME", "en_US.utf8")
 
@@ -33,12 +32,13 @@ filter_inorganic <- function(data){
 
 ## Introduction
 
-The environmental availability of certain nutrients on which microbes depend can deeply shape the composition of the microbiome. Nutrients chemical diversity is large, in this project we will classify them into two main groups:
+The environmental availability of certain nutrients on which microbes depend can deeply shape the composition of the microbiome. Chemically speaking, nutrients are very diverse in molecular weight, composition and complexity. In this project we will classify them into two main groups:
 
- - organic nutrients: Total organic carbon (TOC), and total organic nitrogen (TON).
- - inorganic nutrients: silicate [Si(OH)₄], phosphate (PO4³⁻), ammonium (NH₄⁺), and inorganic nitrogen (NO₃⁻ + NO₂⁻).
+ - Organic nutrients: Total organic carbon (TOC), and total organic nitrogen (TON).
+ - Inorganic nutrients: silicate [Si(OH)₄], phosphate (PO4³⁻), ammonium (NH₄⁺), and inorganic nitrogen (NO₃⁻ + NO₂⁻).
 
-Observing the molar concentration distributions in #fig-nutrients-overview, we can pinpoint an evident difference between organic and inorganic nutrients. That is, organic nutrients concentration ranges are two to three orders of magnitude higher, with TOC close to 100 μM, and TON around 10 μM. This is representative of the Redfield ratio ($C:N:P = 106:16:1$), which establishes one order of magnitude difference between carbon and nitrogen elemental concentrations in oceanic organic matter. From a statistical perspective, distributions with two clear heaps ---known as *bimodal distributions*--- like those of TON and PO4³⁻ likely represent clearly identifiable environmental states based on nutrient availability. It can be hypothesized that anthropogenic input of nutrient could be a driving factor of such processes.
+By observing overall distribution in @fig-nutrients-overview, we can pinpoint an evident difference between organic and inorganic nutrients. That is, organic nutrients concentration ranges are two to three orders of magnitude higher, with TOC close to 100 μM, and TON around 10 μM. This proportion is representative of the Redfield ratio [@redfield1933], which quantifies elemental concentrations of marine organic matter according to the proportion $C:N:P = 106:16:1$. This proportion is highly representative of our data.
+From a statistical perspective, distributions with two clear heaps ---known as *bimodal distributions*--- like those of TON and PO4³⁻ likely represent clearly identifiable environmental states based on nutrient availability. It can be hypothesized that anthropogenic input of nutrient could be a driving factor of such processes.
 
 ```{r}
 #| label: fig-nutrients-overview
