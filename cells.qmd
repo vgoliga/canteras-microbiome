@@ -94,11 +94,11 @@ cells |>
   scale_y_log10() +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
   labs(y = "Concentration (cells/mL)") +
-  theme_bw() +
+  theme_classic() +
   theme(
     axis.text.x = element_text(angle = 20, vjust = .5),
-    legend.background = element_rect(color = "black", linewidth = .2),
-    legend.position = "inside", legend.position.inside = c(.9, .125)
+    legend.background = element_rect(color = "black", linewidth = .5),
+    legend.position = "inside", legend.position.inside = c(.9, .14)
   )
 ```
 
@@ -164,8 +164,9 @@ cells |>
   scale_y_log10() +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
   labs(y = "Concentration (cells/mL)") +
-  theme_bw() +
+  theme_classic() +
   theme(
+    legend.position = "inside", legend.position.inside = c(.64, .87),
     axis.text.x = element_text(angle = 20, vjust = .5),
     legend.background = element_rect(color = "black", linewidth = .2)
   )
@@ -182,15 +183,16 @@ cells |>
   filter(!is.na(season) & !is.na(conc)) |> 
   ggplot(aes(x = season, y = conc, fill = celltype)) +
   geom_boxplot(outliers = F) +
-  geom_jitter(alpha = .3) +
+  geom_jitter(aes(shape = celltype), alpha = .3, size = 2) +
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
+  scale_shape_manual(values = c(16, 8), labels = labels_celltype, name = NULL) +
   scale_fill_discrete(labels = labels_celltype, name = NULL) +
   labs(y = "Concentration (cells/mL)") +
   theme_classic() +
   theme(
     legend.background = element_rect(color = "black", linewidth = .5),
-    legend.position = "inside", legend.position.inside = c(.15, .9))
+    legend.position = "inside", legend.position.inside = c(.1, .9))
 ```
 
 ### High and Low nucleic acid plankton distribution
@@ -232,10 +234,11 @@ cells |>
   scale_y_log10() +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
   labs(y = "Concentration (cells/mL)") +
-  theme_bw() +
+  theme_classic() +
   theme(
+    legend.position = "inside", legend.position.inside = c(.1, .13),
     axis.text.x = element_text(angle = 20, vjust = .5),
-    legend.background = element_rect(color = "black", linewidth = .2)
+    legend.background = element_rect(color = "black", linewidth = .5)
   )
 ```
 
@@ -248,10 +251,11 @@ cells |>
   filter(!is.na(season) & !is.na(conc)) |> 
   ggplot(aes(x = season, y = conc, fill = celltype)) +
   geom_boxplot(outliers = F) +
-  geom_jitter(alpha = .3) +
+  geom_jitter(aes(shape = celltype), alpha = .3, size = 2) +
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
   scale_fill_discrete(labels = labels_celltype, name = NULL) +
+  scale_shape_manual(values = c(16, 8), labels = labels_celltype, name = NULL) +
   labs(y = "Concentration (cells/mL)") +
   theme_classic() +
   theme(
