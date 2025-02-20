@@ -25,18 +25,27 @@ filter_cyanobacteria <- function(data){
   data |> filter(celltype %in% c("prochloro", "synecho"))
 }
 
-filter_nucleic_acid <- function(data){
+filter_dna <- function(data){
   data |> filter(celltype %in% c("hna", "lna"))
 }
 ```
 
 ## Introduction
 
+Cytometry enable us to quantitatively measure cell concentration based on parameters like cell size, color, morphology, size and DNA content. This technology was developed in the field of human medicine and is now applied to marine sciences for microplankton counting and characterization. In this project we classified cell types in three groups:
+
+ - Eukaryotic: Nanoeukaryotes and Picoeukaryotes.
+ - Cyanobacteria: Prochlorococcus and Synechococcus.
+ - DNA content: High nucleic acid (HNA) and low nucleic acid content (LNA).
+
 ```{r}
+#| label: fig-overview
+#| fig-cap: Density functions for all celltypes measured. Horizontal axis in logarithmic scale.
+
 cells |> 
   filter(!is.na(conc) & conc > 0) |> 
   ggplot(aes(x = conc, y = celltype)) +
-  geom_density_ridges(aes(fill = celltype), alpha = .5, scale = 3, bandwidth = .09, show.legend = F) +
+  geom_density_ridges(aes(fill = celltype), alpha = .5, scale = 2, bandwidth = .09, show.legend = F) +
   scale_y_discrete(labels = labels_celltype, name = NULL) +
   scale_x_log10(labels = scales::label_number()) +
   coord_cartesian(clip = "off") +
@@ -44,213 +53,145 @@ cells |>
   theme_classic()
 ```
 
-## Eukaryotic plankton distribution
+## Distribution
+
+### Eukaryotic
+
+For both nano and picoeukaryotes, @fig-eu-space revelas an overall lower concentration in Peña la Vieja than in the rest of stations. Another visivel patter in the figure comes from the gap between Las Canteras and El Confital. Eukaryotes are less abundant in El Confital, it is more extreme for El Confital 1 station in terms of nanoeukaryotes.
 
 ```{r}
+#| label: fig-eu-space
+#| fig-cap: Box plots of eukaryotic cells spatial distribution across measuring stations. Vertical axis in logarithmic scale.
+
 cells |>
   filter_eukaryotes() |> 
   filter(!is.na(conc)) |> 
-  ggplot(aes(y = fct_rev(location), x = conc)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(~ celltype, scales = "free_x", labeller = as_labeller(labels_celltype)) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_y_discrete(labels = labels_location) +
-  scale_x_log10() +
-  labs(x = "concentration (μM)", y = "") +
-  theme_bw()
+  ggplot(aes(x = location, y = conc)) +
+  geom_boxplot(aes(fill = celltype), outliers = F, show.legend = F) +
+  geom_jitter(alpha = .3) +
+  facet_wrap(~ celltype, scales = "free_y", labeller = as_labeller(labels_celltype)) +
+  scale_x_discrete(labels = labels_location, name = NULL) +
+  scale_y_log10() +
+  labs(y = "Concentration (cells/mL)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
 ```
 
+@fig-eu-time shows the minimum cell count of both nano and picoeukaryotes during the spring 2022. It is also worth remarking that a decreasing tendency in both sizes between January 2022 and October 2022.
+
 ```{r}
+#| label: fig-eu-time
+#| fig-cap: Eukaryotic cells temporal distribution. Vertical axis in logarithmic scale.
+
 cells |> 
   filter_eukaryotes() |> 
-  filter(!is.na(conc)) |> 
   filter_analysis() |> 
   ggplot(aes(x = date, conc, shape = location, color = location)) +
-  geom_point() +
-  facet_wrap(
-    ~ celltype, nrow = 2, scale = "free_y", labeller = as_labeller(labels_celltype)
-  ) +
-  scale_shape_discrete(labels = labels_location) +
-  scale_color_discrete(labels = labels_location) +
+  geom_jitter(size = 2, na.rm = T) +
+  facet_wrap(~ celltype, scale = "free_y", labeller = as_labeller(labels_celltype)) +
+  scale_shape_discrete(labels = labels_location, name = NULL) +
+  scale_color_discrete(labels = labels_location, name = NULL) +
   scale_y_log10() +
-  labs(y = "concentration (μM)", shape = "", color = "") +
+  scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
+  labs(y = "Concentration (cells/mL)") +
   theme_bw() +
-  theme(axis.title.x = element_blank(), legend.position = "bottom")
+  theme(
+    axis.text.x = element_text(angle = 20, vjust = .5),
+    legend.background = element_rect(color = "black", linewidth = .2),
+    legend.position = "inside", legend.position.inside = c(.9, .125)
+  )
 ```
 
+The decreasing tendency mentioned before is not symmetrical between nano and pico scales. As observed in @fig-eu-seasons, picoeukaryotes concentration established while nanoeukaryotes increased a drastically in autumn 2022.
+
 ```{r}
+#| label: fig-eu-seasons
+#| fig-cap: Box plots of eukaryotic cells seasonal distribution. Vertical axis in logarithmic scale.
+
 cells |> 
   filter_eukaryotes() |> 
-  filter(!is.na(conc)) |> 
-  filter(!is.na(season)) |> 
-  ggplot(aes(x = season, conc)) +
+  filter(!is.na(season) & !is.na(conc)) |> 
+  ggplot(aes(x = season, y = conc, fill = celltype)) +
   geom_boxplot(outliers = F) +
-  facet_wrap(
-    ~ celltype, nrow = 2, scale = "free_y", labeller = as_labeller(labels_celltype)
-  ) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
+  geom_jitter(alpha = .3) +
+  scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
-  labs(y = "concentration (μM)") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
-```
-```{r}
-cells |> 
-  filter_eukaryotes() |> 
-  filter(!is.na(conc)) |> 
-  filter_analysis() |> 
-  ggplot(aes(x = season, conc)) +
-  geom_boxplot(outliers = F) +
-  facet_grid(
-    location ~ celltype, scale = "free",
-    labeller = as_labeller(c(labels_location, labels_celltype))
-  ) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
-  scale_y_log10() +
-  labs(x = "", y = "concentration (μM)") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 20, vjust = .5))
+  scale_fill_discrete(labels = labels_celltype) +
+  labs(y = "Concentration (cells/mL)") +
+  theme_classic() +
+  theme(
+    legend.title = element_blank(), legend.background = element_rect(color = "black", linewidth = .5),
+    legend.position = "inside", legend.position.inside = c(.9, .1))
 ```
 
-## Cyanobacteria distribution
+
+### Cyanobacteria distribution
+
+Peña la Vieja is once again brought to our attention in @fig-cy-space. This time is a minimum for both type of cyanobacteria measured. The relative lower cell concentration in El Confital compared to Las Canteras is also evident, specially so for synechoccoci.
 
 ```{r}
+#| label: fig-cy-space
+#| fig-cap: Box plots of cyanobacteria spatial distribution across measuring stations. Vertical axis in logarithmic scale.
+
 cells |>
   filter_cyanobacteria() |> 
   filter(!is.na(conc)) |> 
-  ggplot(aes(y = location, x = conc)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(~ celltype, scales = "free_x", labeller = as_labeller(labels_celltype)) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_y_discrete(labels = labels_location) +
-  scale_x_log10() +
-  labs(x = "concentration (μM)", y = "") +
-  theme_bw()
+  ggplot(aes(x = location, y = conc)) +
+  geom_boxplot(aes(fill = celltype), outliers = F, show.legend = F) +
+  geom_jitter(alpha = .3) +
+  facet_wrap(~ celltype, scales = "free_y", labeller = as_labeller(labels_celltype)) +
+  scale_x_discrete(labels = labels_location, name = NULL) +
+  scale_y_log10() +
+  labs(y = "Concentration (cells/mL)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
 ```
 
+In @fig-cy-time we observe the minimum at Peña la Vieja during late winter 2022. It is also the case for synechoccoci at El Confital 1. This could explained by minimum [temperature](temperatures.qmd) registered in winter.
+
 ```{r}
+#| label: fig-cy-time
+#| fig-cap: Cyanobacteria temporal distribution. Vertical axis in logarithmic scale.
+
 cells |> 
   filter_cyanobacteria() |> 
-  filter(!is.na(conc)) |> 
   filter_analysis() |> 
   ggplot(aes(x = date, conc, shape = location, color = location)) +
-  geom_point() +
-  facet_wrap(
-    ~ celltype, nrow = 2, scale = "free_y", labeller = as_labeller(labels_celltype)
-  ) +
-  scale_shape_discrete(labels = labels_location) +
-  scale_color_discrete(labels = labels_location) +
+  geom_jitter(size = 2, na.rm = T) +
+  facet_wrap(~ celltype, scale = "free_y", labeller = as_labeller(labels_celltype)) +
+  scale_shape_discrete(labels = labels_location, name = NULL) +
+  scale_color_discrete(labels = labels_location, name = NULL) +
   scale_y_log10() +
-  labs(y = "concentration (μM)", shape = "", color = "") +
+  scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
+  labs(y = "Concentration (cells/mL)") +
   theme_bw() +
-  theme(axis.title.x = element_blank(), legend.position = "bottom")
+  theme(
+    axis.text.x = element_text(angle = 20, vjust = .5),
+    legend.background = element_rect(color = "black", linewidth = .2)
+  )
 ```
 
+@fig-cy-seasons shows a decoupling between the overall correlated concentrations of both cyanobacterial types, Synecho and Prochloro cocci.
+
 ```{r}
+#| label: fig-cy-seasons
+#| fig-cap: Box plots of cyanobacteria seasonal distribution. Vertical axis in logarithmic scale.
+
 cells |> 
   filter_cyanobacteria() |> 
-  filter(!is.na(conc)) |> 
-  filter(!is.na(season)) |> 
-  ggplot(aes(x = season, conc)) +
+  filter(!is.na(season) & !is.na(conc)) |> 
+  ggplot(aes(x = season, y = conc, fill = celltype)) +
   geom_boxplot(outliers = F) +
-  facet_wrap(
-    ~ celltype, nrow = 2, scale = "free_y", labeller = as_labeller(labels_celltype)
-  ) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
+  geom_jitter(alpha = .3) +
+  scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
-  labs(y = "concentration (μM)") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
+  scale_fill_discrete(labels = labels_celltype) +
+  labs(y = "Concentration (cells/mL)") +
+  theme_classic() +
+  theme(
+    legend.title = element_blank(), legend.background = element_rect(color = "black", linewidth = .5),
+    legend.position = "inside", legend.position.inside = c(.15, .9))
 ```
 
-```{r}
-cells |> 
-  filter_cyanobacteria() |> 
-  filter(!is.na(conc)) |> 
-  filter_analysis() |> 
-  ggplot(aes(x = season, conc)) +
-  geom_boxplot(outliers = F) +
-  facet_grid(
-    location ~ celltype, scale = "free",
-    labeller = as_labeller(c(labels_location, labels_celltype))
-  ) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
-  scale_y_log10() +
-  labs(x = "", y = "concentration (μM)") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 20, vjust = .5))
-```
+### High and Low nucleic acid plankton distribution
 
-## High and Low nucleic acid plankton distribution
-
-```{r}
-cells |>
-  filter_nucleic_acid() |> 
-  filter(!is.na(conc)) |> 
-  ggplot(aes(y = location, x = conc)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(~ celltype, scales = "free_x", labeller = as_labeller(labels_celltype)) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_y_discrete(labels = labels_location) +
-  scale_x_log10() +
-  labs(x = "concentration (μM)", y = "") +
-  theme_bw()
-```
-
-```{r}
-cells |> 
-  filter_nucleic_acid() |> 
-  filter(!is.na(conc)) |> 
-  filter_analysis() |> 
-  ggplot(aes(x = date, conc, shape = location, color = location)) +
-  geom_point() +
-  facet_wrap(
-    ~ celltype, nrow = 2, scale = "free_y", labeller = as_labeller(labels_celltype)
-  ) +
-  scale_shape_discrete(labels = labels_location) +
-  scale_color_discrete(labels = labels_location) +
-  scale_y_log10() +
-  labs(y = "concentration (μM)", shape = "", color = "") +
-  theme_bw() +
-  theme(axis.title.x = element_blank(), legend.position = "bottom")
-```
-
-```{r}
-cells |> 
-  filter_nucleic_acid() |> 
-  filter(!is.na(conc)) |> 
-  filter(!is.na(season)) |> 
-  ggplot(aes(x = season, conc)) +
-  geom_boxplot(outliers = F) +
-  facet_wrap(
-    ~ celltype, nrow = 2, scale = "free_y", labeller = as_labeller(labels_celltype)
-    ) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
-  scale_y_log10() +
-  labs(y = "concentration (μM)") +
-  theme_bw() +
-  theme(axis.title.x = element_blank())
-```
-```{r}
-cells |> 
-  filter_nucleic_acid() |> 
-  filter(!is.na(conc)) |> 
-  filter_analysis() |> 
-  ggplot(aes(x = season, conc)) +
-  geom_boxplot(outliers = F) +
-  facet_grid(
-    location ~ celltype, scale = "free",
-    labeller = as_labeller(c(labels_location, labels_celltype))
-  ) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
-  scale_y_log10() +
-  labs(x = "", y = "concentration (μM)") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 20, vjust = .5))
-```

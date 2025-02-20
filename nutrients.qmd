@@ -36,17 +36,17 @@ The environmental availability of certain nutrients on which microbes depend can
  - Organic nutrients: Total organic carbon (TOC), and total organic nitrogen (TON).
  - Inorganic nutrients: silicate [Si(OH)₄], phosphate (PO4³⁻), ammonium (NH₄⁺), and nitrogen oxoanions (NO₃⁻ + NO₂⁻).
 
-By observing overall distribution in @fig-nutrients-overview, we can pinpoint an evident difference between organic and inorganic nutrients. That is, organic nutrients concentration ranges are two to three orders of magnitude higher, with TOC close to 100 μM, and TON around 10 μM. This proportion is representative of the @redfield1933 ratio, which quantifies elemental concentrations of marine organic matter according to the proportion $C:N:P = 106:16:1$. This proportion is highly representative of our data.
+By observing overall distribution in @fig-overview, we can pinpoint an evident difference between organic and inorganic nutrients. That is, organic nutrients concentration ranges are two to three orders of magnitude higher, with TOC close to 100 μM, and TON around 10 μM. This proportion is representative of the @redfield1933 ratio, which quantifies elemental concentrations of marine organic matter according to the proportion $C:N:P = 106:16:1$. This proportion is highly representative of our data.
 From a statistical perspective, distributions with two clear heaps ---known as *bimodal distributions*--- like those of TON and PO4³⁻ likely represent two clearly distinct environmental states. According to the intention of this project of investigating contamination events, we can make an *a priori* hypothesis stating that anthropocentric input of nutrient is one of the drivers shaping the bimodal distributions.
 
 ```{r}
-#| label: fig-nutrients-overview
-#| fig-cap: Distribution density functions for all nutrient chemical formulas measured. Horizontal axis in logarithmic scale.
+#| label: fig-overview
+#| fig-cap: Density functions for all nutrient chemical formulas measured. Horizontal axis in logarithmic scale.
 
 nutrients |> 
   filter(conc > 0) |> 
   ggplot(aes(x = conc, y = formula)) +
-  geom_density_ridges(aes(fill = formula), alpha = .5, scale = 5, bandwidth = .1, show.legend = F) +
+  geom_density_ridges(aes(fill = formula), alpha = .5, scale = 4, bandwidth = .1, show.legend = F) +
   scale_fill_discrete(labels = labels_formula) +
   scale_x_log10(labels = scales::label_number()) +
   scale_y_discrete(labels = labels_formula, name = NULL) +
@@ -55,7 +55,7 @@ nutrients |>
   theme_classic()
 ```
 
-## Distributions
+## Distribution
 
 Nutrients were monitored along with [temperature](temperatures.qmd) and [cell citometry](cells.qmd). Sampling locations covered the whole length of Las Canteras and El Confital, compared to the more restricted [sampling](samples.qmd) of microbiological data.
 
@@ -65,14 +65,14 @@ Observing @fig-or-space, it is clear at first glance that TOC concentration acro
 
 ```{r}
 #| label: fig-or-space
-#| fig-cap: Box plots of organic nutrient spatial distribution across all measuring stations. Horizontal axis in logarithmic scale.
+#| fig-cap: Box plots of organic nutrient spatial distribution across measuring stations. Horizontal axis in logarithmic scale.
 
 nutrients |>
   filter(conc > 0) |> 
   filter_organic() |> 
   ggplot(aes(y = fct_rev(location), x = conc)) +
   geom_boxplot(aes(fill = formula), outliers = F, show.legend = F) +
-  geom_jitter(alpha = .3, show.legend = F) +
+  geom_jitter(alpha = .3) +
   facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
   scale_y_discrete(labels = labels_location, name = NULL) +
   scale_x_log10() +
@@ -89,18 +89,15 @@ nutrients |>
   filter_analysis() |> 
   ggplot(aes(x = date, conc, shape = location, color = location)) +
   geom_jitter(size = 2) +
-  facet_wrap(
-    ~ formula, scale = "free_y", dir = "v", labeller = as_labeller(labels_formula)
-  ) +
-  scale_shape_discrete(labels = labels_location) +
-  scale_color_discrete(labels = labels_location) +
+  facet_wrap(~ formula, scale = "free_y", dir = "v", labeller = as_labeller(labels_formula)) +
+  scale_shape_discrete(labels = labels_location, name = NULL) +
+  scale_color_discrete(labels = labels_location, name = NULL) +
   scale_y_log10() +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
   labs(y = "Concentration (μM)") +
   theme_bw() +
   theme(
     legend.position = "inside", legend.position.inside = c(.1, .3),
-    legend.title = element_blank(),
     legend.background = element_rect(color = "black", linewidth = .2)
   )
 ```
