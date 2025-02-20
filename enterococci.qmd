@@ -4,7 +4,7 @@ title: "Enterococci"
 
 ```{r}
 #| label: setup
-#| message: false
+#| include: false
 
 library(tidyverse)
 library(here)
@@ -23,38 +23,42 @@ enterococci <-
   mutate(season = make_season(date))
 ```
 
-## Temporal distribution
+## Introduction
+
+*Enterococcus* is a genus of bacteria widely used as an indicator of fecal contamination. Standard biochemical tests and culturing methods are used to establish the amount of colony forming units (CFU) for an amount of sampled volume of water. Public regulations define threshold values for enterococci concentration to assets water quality, and many bathing zones are closed because they don't meet hygienic criteria. In a review study, @peter2025 claimed that sewage discharge from human and animal wastewaters is the primary source of enterococci. They also proposed heavy rainfall and storms as key drivers of acute contamination events in coastal waters.
+
+## Evolution
+
+As observed in figure @fig-time, 2022 was a year of noticeable contamination events.
 
 ```{r}
+#| label: fig-time
+#| fig-cap: Temporal evolution of enterococci colony forming units in El Confital.
+
 enterococci |> 
   filter(!is.na(season)) |> 
   ggplot(aes(x = date, y = conc)) +
   geom_point() +
+  scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
   labs(x = "", y = "Enterococci (CFU/100mL)", caption = "Source: AT Hidrotecnia S.L.") +
   theme_classic()
 ```
 
-```{r}
-enterococci |> 
-  filter(!is.na(season)) |> 
-  ggplot(aes(x = season, y = conc)) +
-  geom_boxplot(outliers = F) +
-  geom_jitter(alpha = .3, width = .3) +
-  scale_x_discrete(labels = labels_season) +
-  labs(x = "", y = "Enterococci (CFU/100mL)", caption = "Source: AT Hidrotecnia S.L.") +
-  theme_classic()
-```
+@fig-overlap shows which samples are more likely affected by fecal contamination events.
 
 ```{r}
+#| label: fig-overlap
+#| fig-cap: Overlay of contamination events with microbiome sample collection.
+
 ggplot() +
   geom_point(
     data = samples |> filter_analysis(),
-    aes(x = date, y = fct_rev(location), shape = "Samples"),
+    aes(x = date, y = fct_rev(location), shape = "microbiome\nsamples"),
   ) +
   geom_point(
     data = enterococci |> filter(!is.na(season)) |> mutate(location = "Confital_1"),
     aes(x = date, y = fct_rev(location), size = conc),
-    shape = 1
+    shape = 1, color = "darkred"
   ) +
   scale_y_discrete(labels = labels_location) +
   scale_size_continuous(range = c(1, 15)) +
@@ -63,6 +67,5 @@ ggplot() +
     shape = "", caption = "Source: AT Hidrotecnia S.L."
     ) +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y") +
-  geom_vline(xintercept = seasons_limits, linetype = "dotted") +
   theme_classic()
 ```
