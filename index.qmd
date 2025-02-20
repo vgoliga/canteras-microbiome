@@ -4,4 +4,6 @@ title: "Welcome"
 
 Welcome to the **Canteras Microbiome Project**! A research project of marine microbial indicators of biological contamination in Las Palmas de Gran Canaria, Spain. This project is made in association with [Biological Oceanography in a Changing Ocean - IOCAG](https://www.gob-iocag.ulpgc.es/) and their team from the University of Las Palmas de Gran Canaria.
 
+The database of the project was made possible by Markel Gómez Letona^[<https://orcid.org/0000-0001-9325-3979>], Maria Fernanda Montero^[<https://orcid.org/0000-0001-8124-8136>] and Javier Arístegui^[<https://orcid.org/0000-0001-8124-8136>].
+
 [![Las Canteras beach in Las Palmas de Gran Canaria. Foto by Bengt Nyman.](canteras.jpeg)](https://upload.wikimedia.org/wikipedia/commons/1/1e/Playa_de_las_Canteras_2016_33.jpg)
