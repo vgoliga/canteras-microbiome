@@ -4,9 +4,7 @@ title: "Data Overview"
 
 ```{r}
 #| label: setup
-#| echo: false
-#| message: false
-#| output: false
+#| include: false
 
 library(tidyverse)
 library(gt)
@@ -21,17 +19,26 @@ samples <-
 
 prokaryotes <- 
   read_csv(here("data", "prokaryotes.csv")) |>
-  mutate_asv_rarity()
+  mutate_asv_rarity() |> 
+  mutate(community = "Prokaryotic", .before = 1)
 
 eukaryotes <- 
   read_csv(here("data", "eukaryotes.csv")) |>
-  mutate_asv_rarity()
+  mutate_asv_rarity() |> 
+  mutate(community = "Eukaryotic", .before = 1)
 
 asvs <- 
-  prokaryotes |> mutate(community = "Prokaryotic", .before = 1) |>
-  bind_rows(eukaryotes |> mutate(community = "Eukaryotic", .before = 1)) |>
-  left_join(samples, by = join_by(sample)) |> 
+  prokaryotes |> 
+  bind_rows(eukaryotes) |>
   count(community, asv, encounters, probability_pct, rarity, wt = reads, name = "reads")
+
+diversities <- 
+  prokaryotes |>  
+  bind_rows(eukaryotes) |> 
+  left_join(samples, by = join_by(sample)) |> 
+  mutate(p = reads / max(reads), .by = sample, .after = reads) |> 
+  group_by(community, sample, location, date, season) |> 
+  summarize(shannon = - sum(p * log(p)), .groups = "drop")
 ```
 
 ## Introduction
@@ -121,7 +128,42 @@ asvs |>
   tab_options(table.width = pct(100))
 ```
 
-### Singular taxa distribution
+## Shannon diversity index
+
+Community diversity is an indicator of overall microbiome health and fitness. Therefore, relative low Shannon Index values signal community degrading processes, including wastewater intrusion. @fig-shannon-seasonal point again to our suspicion that the summer 2022 was affected by contamination. 
+
+```{r}
+#| label: fig-shannon-space
+#| fig-cap: Box plots of Shannon diversity index spatial distribution
+
+diversities |> 
+  filter_analysis() |> 
+  ggplot(aes(x = location, y = shannon)) +
+  geom_boxplot(aes(fill = community), show.legend = F) +
+  facet_wrap(~ community) +
+  scale_x_discrete(labels = labels_location, name = NULL) +
+  labs(y = "Shannon Index") +
+  theme_classic()
+```
+
+
+
+```{r}
+#| label: fig-shannon-season
+#| fig-cap: Box plots of Shannon diversity index seasonal distribution.
+
+diversities |> 
+  filter_analysis() |> 
+  ggplot(aes(x = season, y = shannon)) +
+  geom_boxplot(aes(fill = community), show.legend = F) +
+  facet_wrap(~ community) +
+  scale_x_discrete(labels = labels_season, name = NULL) +
+  labs(y = "Shannon Index") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 20, vjust = .5))
+```
+
+
 
 ```{r}
 # taxa |> 
@@ -186,10 +228,6 @@ asvs |>
 #   labs(x = "", y = "relative abundance of ubiquitous taxa") +
 #   theme_classic()
 ```
-
-### Recurring subdivision
-
-Because there are so many they will be subdivided
 
 ```{r}
 # taxa |> 
