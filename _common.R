@@ -33,15 +33,15 @@ mutate_asv_rarity <- function(data){
     mutate(
       rarity = 
         case_when(
-          rate < 5                ~ "0-5",
+          rate < 5                ~ "< 5",
           between(rate, 5, 25)    ~ "5-25",
           between(rate, 25, 50)   ~ "25-50",
           between(rate, 50, 75)   ~ "50-75",
           between(rate, 75, 95)   ~ "75-95",
-          rate > 95               ~ "95-100",
+          rate > 95               ~ "> 95",
           .default = NA
         ) |> 
-        fct(levels = c("0-5", "5-25", "25-50", "50-75", "75-95", "95-100"))
+        fct(levels = c("< 5", "5-25", "25-50", "50-75", "75-95", "> 95"))
     )
   # mutate(rarity = probability_pct |> cut_width(5, center = 5/2), .after = probability_pct)
 }

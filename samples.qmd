@@ -4,9 +4,7 @@ title: "Sample Metadata"
 
 ```{r}
 #| label: setup
-#| echo: false
-#| message: false
-#| output: false
+#| include: false
 
 Sys.setlocale("LC_TIME", "en_US.utf8")
 
@@ -58,8 +56,8 @@ Not all locations were consistently sampled, *El Confital 2* and *Playa Chica* w
 samples |>
   ggplot(aes(y = fct_rev(location))) +
   geom_bar() +
-  scale_y_discrete(labels = labels_location) +
-  labs(x = "Number of samples", y = "") +
+  scale_y_discrete(labels = labels_location, name = NULL) +
+  labs(x = "Samples (n)") +
   theme_classic()
 ```
 ## Dates and seasons

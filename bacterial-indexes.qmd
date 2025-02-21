@@ -4,8 +4,7 @@ title: "Bacterial Indexes"
 
 ```{r}
 #| label: setup
-#| message: false
-#| output: false
+#| include: false
 
 Sys.setlocale("LC_TIME", "en_US.utf8")
 
