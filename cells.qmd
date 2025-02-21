@@ -14,7 +14,7 @@ source(here("_common.R"))
 
 cells <-
   read_csv(here("data", "cells.csv"), col_types = cols(location = col_factor(levels = locations))) |> 
-  mutate(celltype = fct(celltype) |> fct_reorder(conc, .fun = max, .na.rm = T)) |> 
+  mutate(celltype = fct(celltype) |> fct_reorder(conc, .fun = max, .na_rm = T)) |> 
   mutate(season = make_season(date))
 
 filter_eukaryotes <- function(data){

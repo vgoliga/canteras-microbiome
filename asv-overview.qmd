@@ -156,11 +156,9 @@ diversities |>
   geom_boxplot(aes(fill = community), show.legend = F) +
   facet_wrap(~ community) +
   scale_x_discrete(labels = labels_location, name = NULL) +
-  labs(y = "Shannon Index") +
+  labs(y = "Shannon diversity index") +
   theme_classic()
 ```
-
-
 
 ```{r}
 #| label: fig-shannon-season
