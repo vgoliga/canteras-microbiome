@@ -7,6 +7,7 @@ title: "Data Overview"
 #| include: false
 
 library(tidyverse)
+library(ggridges)
 library(gt)
 library(here)
 
@@ -30,7 +31,7 @@ eukaryotes <-
 asvs <- 
   prokaryotes |> 
   bind_rows(eukaryotes) |>
-  count(community, asv, encounters, probability_pct, rarity, wt = reads, name = "reads")
+  count(community, asv, encounters, rate, rarity, wt = reads, name = "reads")
 
 diversities <- 
   prokaryotes |>  
@@ -73,7 +74,6 @@ asvs |>
   ggplot(aes(x = rarity)) +
   geom_bar() +
   facet_wrap(~ community) +
-  scale_y_log10() +
   labs(x = "Rarity (%)", y = "ASVs (n)") +
   theme_classic()
 ```
@@ -101,13 +101,25 @@ Relative abundance is easily computed by dividing the number of reads of a certa
 #| fig-cap: Violin plot showing the distribution of taxon relative abundance by rarity. All data points are represented, with close to 10⁵ observations.
 
 asvs |>
-  ggplot(aes(x = rarity, y = reads, fill = community)) +
-  geom_violin() +
+  ggplot(aes(x = rarity, y = reads)) +
+  geom_violin(aes(fill = community), show.legend = F) +
   scale_y_log10(labels = scales::label_number()) +
-  labs(x = "Rarity (%)", y = "Reads (n)", fill = "") +
-  theme_classic() +
-  theme(legend.position = "inside", legend.position.inside = c(.8, .1), legend.direction = "horizontal")
+  facet_wrap(~ community) +
+  labs(x = "Rarity (%)", y = "Reads (n)") +
+  theme_classic()
 ```
+
+```{r}
+asvs |>
+  ggplot(aes(x = reads, y = rarity)) +
+  geom_density_ridges(aes(fill = community), bandwidth = .1, alpha = .5, show.legend = F) +
+  facet_wrap(~ community) +
+  scale_x_log10(labels = scales::label_number()) +
+  labs(x = "Reads (n)", y = "Rarity (%)") +
+  theme_classic()
+```
+
+
 ## Summary table
 
 ```{r}
@@ -124,7 +136,7 @@ asvs |>
     reads_pct = md("**Reads (%)**")
   ) |>
   fmt_number(columns = c(n_pct, reads_pct), decimals = 2) |> 
-  summary_rows(columns = c(n, n_pct, reads, reads_pct), fns = list("TOTAL" = ~ sum(.))) |> 
+  summary_rows(columns = c(n, reads), fns = list("TOTAL" = ~ sum(.))) |> 
   tab_options(table.width = pct(100))
 ```
 
