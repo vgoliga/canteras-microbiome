@@ -4,6 +4,7 @@ canteras-microbiome.Rproj
 .RData
 .Ruserdata
 experimental.qmd
+.github
 _site
 
 /.quarto/
