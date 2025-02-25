@@ -27,8 +27,6 @@ enterococci <-
 
 ## When did the contamiantion events happened in El Confital?
 
-As observed in figure @fig-time, 2022 was a year of noticeable contamination events.
-
 ```{r}
 #| label: fig-time
 #| fig-cap: Temporal evolution of enterococci colony forming units in El Confital.
@@ -43,8 +41,6 @@ enterococci |>
 ```
 
 ## How does this data overlap with our mcirobiome samples?
-
-@fig-overlap shows which samples are more likely affected by fecal contamination events.
 
 ```{r}
 #| label: fig-overlap
