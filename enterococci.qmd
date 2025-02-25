@@ -2,6 +2,8 @@
 title: "Enterococci"
 ---
 
+*Enterococcus* is a genus of bacteria widely used as an indicator of fecal contamination. Standard biochemical tests and culturing methods are used to establish the amount of colony forming units (CFU) for an amount of sampled volume of water. Public regulations define threshold values for enterococci concentration to assets water quality, and many bathing zones are closed because they don't meet hygienic criteria. In a review study, @peter2025 claimed that sewage discharge from human and animal wastewaters is the primary source of enterococci. They also proposed heavy rainfall and storms as key drivers of acute contamination events in coastal waters.
+
 ```{r}
 #| label: setup
 #| include: false
@@ -23,11 +25,7 @@ enterococci <-
   mutate(season = make_season(date))
 ```
 
-## Introduction
-
-*Enterococcus* is a genus of bacteria widely used as an indicator of fecal contamination. Standard biochemical tests and culturing methods are used to establish the amount of colony forming units (CFU) for an amount of sampled volume of water. Public regulations define threshold values for enterococci concentration to assets water quality, and many bathing zones are closed because they don't meet hygienic criteria. In a review study, @peter2025 claimed that sewage discharge from human and animal wastewaters is the primary source of enterococci. They also proposed heavy rainfall and storms as key drivers of acute contamination events in coastal waters.
-
-## Evolution
+## When did the contamiantion events happened in El Confital?
 
 As observed in figure @fig-time, 2022 was a year of noticeable contamination events.
 
@@ -44,6 +42,8 @@ enterococci |>
   theme_classic()
 ```
 
+## How does this data overlap with our mcirobiome samples?
+
 @fig-overlap shows which samples are more likely affected by fecal contamination events.
 
 ```{r}
@@ -52,7 +52,7 @@ enterococci |>
 
 ggplot() +
   geom_point(
-    data = samples |> filter_analysis(),
+    data = samples,
     aes(x = date, y = fct_rev(location), shape = "microbiome\nsamples"),
   ) +
   geom_point(
@@ -61,7 +61,7 @@ ggplot() +
     shape = 1, color = "darkred"
   ) +
   scale_y_discrete(labels = labels_location) +
-  scale_size_continuous(range = c(1, 15)) +
+  scale_size_continuous(breaks = c(10, 100, 400), range = c(1, 15)) +
   labs(
     x = "", y = "", size = "Enterococci\n(CFU/100mL)",
     shape = "", caption = "Source: AT Hidrotecnia S.L."

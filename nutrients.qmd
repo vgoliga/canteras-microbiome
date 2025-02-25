@@ -1,6 +1,11 @@
 ---
-title: "Nutrients"
+title: "Environmental nutrients"
 ---
+
+The environmental availability of certain nutrients on which microbes depend can deeply shape the composition of the microbiome. Chemically speaking, nutrients are very diverse in molecular weight, composition and complexity. In this project we will classify them into two main groups:
+
+ - Organic nutrients: Total organic carbon (TOC), and total organic nitrogen (TON).
+ - Inorganic nutrients: silicate [Si(OH)₄], phosphate (PO4³⁻), ammonium (NH₄⁺), nitrate (NO₃⁻) and nitrite (NO₂⁻).
 
 ```{r}
 #| label: setup
@@ -15,7 +20,9 @@ library(here)
 source(here("_common.R"))
 
 nutrients <- 
-  read_csv(here("data", "nutrients.csv"), col_types = cols(location = col_factor(levels = locations))) |> 
+  read_csv(
+    here("data", "nutrients.csv"), col_types = cols(location = col_factor(levels = locations))
+  ) |> 
   mutate(formula = fct(formula) |> fct_reorder(conc, .fun = max, .na_rm = T)) |> 
   mutate(season = make_season(date))
 
@@ -29,15 +36,9 @@ filter_inorganic <- function(data){
 }
 ```
 
-## Introduction
+## Did different nutrients have similar concentrations?
 
-The environmental availability of certain nutrients on which microbes depend can deeply shape the composition of the microbiome. Chemically speaking, nutrients are very diverse in molecular weight, composition and complexity. In this project we will classify them into two main groups:
-
- - Organic nutrients: Total organic carbon (TOC), and total organic nitrogen (TON).
- - Inorganic nutrients: silicate [Si(OH)₄], phosphate (PO4³⁻), ammonium (NH₄⁺), and nitrogen oxoanions (NO₃⁻ + NO₂⁻).
-
-By observing overall distribution in @fig-overview, we can pinpoint an evident difference between organic and inorganic nutrients. That is, organic nutrients concentration ranges are two to three orders of magnitude higher, with TOC close to 100 μM, and TON around 10 μM. This proportion is representative of the @redfield1933 ratio, which quantifies elemental concentrations of marine organic matter according to the proportion $C:N:P = 106:16:1$. This proportion is highly representative of our data.
-From a statistical perspective, distributions with two clear heaps ---known as *bimodal distributions*--- like those of TON and PO4³⁻ likely represent two clearly distinct environmental states. According to the intention of this project of investigating contamination events, we can make an *a priori* hypothesis stating that anthropocentric input of nutrient is one of the drivers shaping the bimodal distributions.
+By observing overall distribution in @fig-overview, we can pinpoint an evident difference between organic and inorganic nutrients. That is, organic nutrients concentration ranges are two to three orders of magnitude higher---TOC close to 100 μM, and TON around 10 μM. This proportion is representative of the @redfield1933 ratio, which quantifies elemental concentrations of marine organic matter according to the proportion $C:N:P = 106:16:1$. This proportion is highly representative of our data.
 
 ```{r}
 #| label: fig-overview
@@ -48,37 +49,74 @@ nutrients |>
   ggplot(aes(x = conc, y = formula)) +
   geom_density_ridges(aes(fill = formula), alpha = .5, scale = 4, bandwidth = .1, show.legend = F) +
   scale_fill_discrete(labels = labels_formula) +
-  scale_x_log10(labels = scales::label_number()) +
-  scale_y_discrete(labels = labels_formula, name = NULL) +
+  scale_x_log10(labels = scales::label_number(), expand = c(0, 0)) +
+  scale_y_discrete(labels = labels_formula, name = NULL, expand = c(0, 0)) +
   labs(x = "Concentration (μM)") +
   coord_cartesian(clip = "off") +
   theme_classic()
 ```
 
-## Distribution
+```{r}
+#| label: fig-overview-2
+#| fig-cap: Median nutrient concentrations with min-max ranges across seasons. Vertical axis in logarithmic scale.
+#| warning: false
 
-Nutrients were monitored along with [temperature](temperatures.qmd) and [cell citometry](cells.qmd). Sampling locations covered the whole length of Las Canteras and El Confital, compared to the more restricted [sampling](samples.qmd) of microbiological data.
+nutrients |> 
+  filter(!is.na(season)) |> 
+  ggplot(aes(x = season, y = conc, color = formula)) +
+  geom_pointrange(stat = "summary", position = position_dodge(width = 1), fun = median, fun.min = min, fun.max = max) +
+  scale_x_discrete(labels = labels_season, name = NULL) +
+  scale_y_log10(labels = scales::label_number()) +
+  scale_color_discrete(labels = labels_formula, name = NULL) +
+  labs(y = "Concentration (μM)") +
+  theme_classic() +
+  theme(legend.background = element_rect(color = "black"))
+```
 
-### Organic nutrients
+
+## Were there differences between sampling stations?
 
 Observing @fig-or-space, it is clear at first glance that TOC concentration across the coast is more homogeneous than that of TON. The TOC maximum of Peña la Vieja also stands out. Moving to figure @fig-or-time we observe that it was measured at the end of the monitoring period in the spring of 2023. On the other hand, TON dropped in El Confital 1 and Peña la Vieja between October 2022 and April 2023. This is not the case at Hotel Cristina. Further investigation is needed in order to understand the factors driving these processes.
 
+In both @fig-in-space and @fig-in-time, we can observe a difference between El Confital and Las Canteras. Concretely, Si(OH)₄ and NO₃⁻ + NO₂⁻ concentration are overall higher in Las Canteras compared to El Confital. Within Las Canteras, these nutrients show a decreasing tendency as we move North. This pattern is representative of different land input regimes, whose shaping agents are the ravines located South of Las Canteras. Ravine discharge contains siliceous sediments from volcanic rocks as well as nitrtates. However, in @fig-in-space shows an unusual distribution of NO₃⁻ + NO₂⁻ at Peña la Vieja, which could be an indicator of anthropogenic input of nutrients.
+
 ```{r}
 #| label: fig-or-space
-#| fig-cap: Box plots of organic nutrient spatial distribution across measuring stations. Horizontal axis in logarithmic scale.
+#| fig-cap: Organic nutrient distribution across sampling stations. Horizontal axis in logarithmic scale.
+
+nutrients |> 
+  filter(conc > 0) |> 
+  filter_organic() |> 
+  ggplot(aes(x = conc, y = fct_rev(location), fill = formula)) +
+  geom_density_ridges(aes(fill = formula), scale = 3, bandwidth = .1) +
+  scale_fill_discrete(labels = labels_formula, name = NULL) +
+  scale_x_log10(labels = scales::label_number(), expand = c(0, 0)) +
+  scale_y_discrete(labels = labels_location, name = NULL, expand = c(0, 0)) +
+  labs(x = "Concentration (μM)") +
+  coord_cartesian(clip = "off") +
+  theme_classic() +
+  theme(
+    legend.position = "inside", legend.position.inside = c(.1, .9),
+    legend.background = element_rect(color = "black")
+    )
+```
+```{r}
+#| label: fig-in-space
+#| fig-cap: Inorganic nutrient distribution across sampling stations. Horizontal axis in logarithmic scale.
 
 nutrients |>
   filter(conc > 0) |> 
-  filter_organic() |> 
+  filter_inorganic() |> 
   ggplot(aes(y = fct_rev(location), x = conc)) +
   geom_boxplot(aes(fill = formula), outliers = F, show.legend = F) +
-  geom_jitter(alpha = .3) +
   facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
   scale_y_discrete(labels = labels_location, name = NULL) +
   scale_x_log10() +
   labs(x = "Concentration (μM)") +
   theme_classic()
 ```
+
+## How did nutrient concentration change over time?
 
 ```{r}
 #| label: fig-or-time
@@ -95,32 +133,11 @@ nutrients |>
   scale_y_log10() +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
   labs(y = "Concentration (μM)") +
-  theme_bw() +
+  theme_classic() +
   theme(
-    legend.position = "inside", legend.position.inside = c(.1, .3),
-    legend.background = element_rect(color = "black", linewidth = .2)
+    legend.position = "inside", legend.position.inside = c(.1, .32),
+    legend.background = element_rect(color = "black")
   )
-```
-
-### Inorganic nutrients
-
-In both @fig-in-space and @fig-in-time, we can observe a difference between El Confital and Las Canteras. Concretely, Si(OH)₄ and NO₃⁻ + NO₂⁻ concentration are overall higher in Las Canteras compared to El Confital. Within Las Canteras, these nutrients show a decreasing tendency as we move North. This pattern is representative of different land input regimes, whose shaping agents are the ravines located South of Las Canteras. Ravine discharge contains siliceous sediments from volcanic rocks as well as nitrtates. However, in @fig-in-space shows an unusual distribution of NO₃⁻ + NO₂⁻ at Peña la Vieja, which could be an indicator of anthropogenic input of nutrients.
-
-```{r}
-#| label: fig-in-space
-#| fig-cap: Box plots of inorganic nutrient spatial distribution across all measuring stations. Horizontal axis in logarithmic scale.
-
-nutrients |>
-  filter(conc > 0) |> 
-  filter_inorganic() |> 
-  ggplot(aes(y = fct_rev(location), x = conc)) +
-  geom_boxplot(aes(fill = formula), outliers = F, show.legend = F) +
-  geom_jitter(alpha = .3, show.legend = F) +
-  facet_wrap(~ formula, scales = "free_x", labeller = as_labeller(labels_formula)) +
-  scale_y_discrete(labels = labels_location, name = NULL) +
-  scale_x_log10() +
-  labs(x = "Concentration (μM)") +
-  theme_classic()
 ```
 
 ```{r}
@@ -141,14 +158,12 @@ nutrients |>
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y", name = NULL) +
   scale_y_log10() +
   labs(y = "Concentration (μM)") +
-  theme_bw() +
+  theme_classic() +
   theme(
-    legend.title = element_blank(), legend.background = element_rect(color = "black", linewidth = .3),
+    legend.title = element_blank(),
+    legend.background = element_rect(color = "black"),
     axis.text.x = element_text(angle = 20, vjust = .5)
     )
 ```
 
-<!-- ## Eutrophization -->
-
-<!-- Locations in Las Canteras beach appear to have overall higher inorganic nutrient concentrations (@fig-in-space). Hotel Cristina is characterized by relative higher overall nutrient concentration. An increasing tendency is observed starting in autumn 2022 reaching it maximum in the spring 2023---when our data ends, so it likely increases beyond. This process is unprecedented in the project's scope, we can vaguely interpret it as inputs from the city's sewage system, however further investigation outside this project's scope should be conducted. Visit [Bacterial Indexes](bacterial-indexes.qmd) to explore the response of the bacterial community to these changes. -->
 

@@ -5,17 +5,40 @@ locations <-
     "Pena_la_Vieja", "Cicer"
   )
 
+make_key <- function(year, month, location){
+  location_key <- 
+    location |> case_match(
+      "Confital_2"      ~ "C2",
+      "Confital_1"      ~ "C1",
+      "Hotel_Cristina"  ~ "HC",
+      "Playa_Chica"     ~ "PC",
+      "Pena_la_Vieja"   ~ "PV",
+      "Reina_Isabel"    ~ "RI",
+      "La_Puntilla"     ~ "LP",
+      "Cicer"           ~ "LC"
+    )
+  
+  str_glue(
+    "{substr(year, 3, 4)}{str_pad(month, 2, pad = 0)}{location_key}"
+  ) |>
+  fct()
+}
+  
+
 filter_analysis <- function(data){
   data |>
     filter(location %in% c("Confital_1", "Hotel_Cristina", "Pena_la_Vieja")) |> 
-    filter(!is.na(season))
+    filter(date |> between(start, end))
 }
 
-seasons_limits <- seq(ymd("2021-10-01"), ymd("2023-07-01"), by = "3 month") |> as_datetime()
+start <- ymd("2021-07-01")
+end <- ymd("2023-07-01")
+
+seasons_limits <- seq(start, end, by = "3 month") |> as_datetime()
 
 make_season <- function(date){
   seasons <- 
-    c("2021-autumn", "2021-winter", "2022-spring", "2022-summer", "2022-autumn", "2022-winter", "2023-spring")
+    c("2021-summer", "2021-autumn", "2021-winter", "2022-spring", "2022-summer", "2022-autumn", "2022-winter", "2023-spring")
   
   match_season <- function(x) {
     idx = which(x >= seasons_limits) |> last()
@@ -26,19 +49,19 @@ make_season <- function(date){
   
 }
 
-mutate_asv_rarity <- function(data){
+mutate_asv_rate <- function(data){
   data |> 
     mutate(encounters = n(), .after = asv, .by = asv) |> 
-    mutate(rate = encounters /max(encounters) * 100, .after = encounters) |> 
+    mutate(rate_pct = encounters /max(encounters) * 100, .after = encounters) |> 
     mutate(
-      rarity = 
+      rate = 
         case_when(
-          rate < 5                ~ "< 5",
-          between(rate, 5, 25)    ~ "5-25",
-          between(rate, 25, 50)   ~ "25-50",
-          between(rate, 50, 75)   ~ "50-75",
-          between(rate, 75, 95)   ~ "75-95",
-          rate > 95               ~ "> 95",
+          rate_pct < 5                ~ "< 5",
+          between(rate_pct, 5, 25)    ~ "5-25",
+          between(rate_pct, 25, 50)   ~ "25-50",
+          between(rate_pct, 50, 75)   ~ "50-75",
+          between(rate_pct, 75, 95)   ~ "75-95",
+          rate_pct > 95               ~ "> 95",
           .default = NA
         ) |> 
         fct(levels = c("< 5", "5-25", "25-50", "50-75", "75-95", "> 95"))
@@ -61,6 +84,7 @@ labels_location <-
 
 labels_season <- 
   c(
+    "2021-summer" = "Sum 2021",
     "2021-autumn" = "Aut 2021",
     "2021-winter" = "Win 2021",
     "2022-spring" = "Spr 2022",
@@ -86,8 +110,8 @@ labels_celltype <-
     "picoeuka"  = "Picoeukaryotes",
     "prochloro" = "Prochlorococcus",
     "synecho"   = "Synechococcus",
-    "hna"       = "HNA",
-    "lna"       = "LNA"
+    "hna"       = "HNA Bacteria",
+    "lna"       = "LNA Bacteria"
   )
 
 labels_index <- 

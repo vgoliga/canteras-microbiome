@@ -1,0 +1,273 @@
+---
+title: "Taxonomical composition"
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(gt)
+library(here)
+
+source(here("_common.R"))
+
+samples <- 
+  read_csv(here("data", "samples.csv"), col_types = cols(location = col_factor(levels = locations))) |>
+  mutate(date = make_datetime(year, month, day)) |> 
+  mutate(season = make_season(date))
+
+prokaryotes <- 
+  read_csv(here("data", "prokaryotes.csv")) |> 
+  left_join(samples, by = join_by(sample)) |> 
+  mutate_asv_rate()
+
+eukaryotes <- 
+  read_csv(here("data", "eukaryotes.csv")) |> 
+  left_join(samples, by = join_by(sample)) |> 
+  mutate_asv_rate()
+```
+
+## How did the microbiome composition change over time?
+
+```{r}
+#| label: fig-prokaryotes-season
+#| fig-cap: Seasonal evolution of prokaryotic microbiome composition.
+
+prokaryotes |> 
+  mutate(
+    order =
+      fct_lump_n(order, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+    ) |> 
+  ggplot(aes(x = season, fill = order)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .3) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  scale_x_discrete(labels = labels_season, name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  labs(y = "Bacteria relative abundance") +
+  theme_classic()
+```
+
+```{r}
+#| label: fig-eukaryotes-season
+#| fig-cap: Seasonal evolution of eukaryotic microbiome composition.
+
+eukaryotes |> 
+  mutate(
+    class =
+      fct_lump_n(class, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+    ) |> 
+  ggplot(aes(x = season, fill = class)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .3) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  scale_x_discrete(labels = labels_season, name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  labs(y = "Eukaryotic relative abundance") +
+  theme_classic()
+```
+
+## Was there a difference in composition between sampling stations?
+
+```{r}
+#| label: fig-prokaryotes-location
+#| fig-cap: Prokaryotic microbiome composition for each monitored location.
+
+prokaryotes |> 
+  filter_analysis() |> 
+  mutate(
+    order =
+      fct_lump_n(order, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+    ) |> 
+  ggplot(aes(x = location, fill = order)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .3) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  scale_x_discrete(labels = labels_location, name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  labs(y = "Prokaryotic relative abundance") +
+  theme_classic()
+```
+
+```{r}
+#| label: fig-eukaryotes-location
+#| fig-cap: Eukaryotes microbiome composition for each monitored location.
+
+eukaryotes |> 
+  filter_analysis() |> 
+  mutate(
+    class =
+      fct_lump_n(class, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+    ) |> 
+  ggplot(aes(x = location, fill = class)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .3) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  scale_x_discrete(labels = labels_location, name = NULL) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Eukaryotic relative abundance") +
+  theme_classic()
+```
+
+## Which samples were the most unusual?
+
+```{r}
+#| label: fig-prokaryotes-unusual
+#| fig-cap: Prokaryotic composition based on encounter rate.
+
+prokaryotes |>
+  ggplot(aes(x = sample, fill = rate)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  facet_grid(
+    . ~ season, scales = "free_x", space = "free_x",
+    labeller = as_labeller(c(labels_location, labels_season))
+  ) +
+  scale_x_discrete(name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  labs(y = "Prokaryotic relative abundance", fill = "Rate (%)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
+```{r}
+#| label: fig-eukaryotes-unusual
+#| fig-cap: Eukaryotic composition based on encounter rate.
+
+eukaryotes |>
+  ggplot(aes(x = sample, fill = rate)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  facet_grid(
+    . ~ season, scales = "free_x", space = "free_x",
+    labeller = as_labeller(c(labels_location, labels_season))
+  ) +
+  scale_x_discrete(name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  labs(y = "Eukaryotic relative abundance", fill = "Rate (%)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
+## Did we find bacteria from human excretions?
+
+Yes! All bacterial species in @tbl-bacteria were detected in the monitoring and are also documented to come from the human gastrointestinal track or other bodily fluids. The most well-known of which is *Escherichia coli*, although there are many more species of bacteria living inside our bodies.
+
+| Species                            | Reference              |
+|------------------------------------|------------------------|
+| *Alistipes indistinctus*           | @nagai2010             |
+| *Alistipes onderdonkii*            | @sakamoto2020          |
+| *Alistipes timonensis*             | @lagier2012            |
+| *Bacteroides dorei*                | @bakir2006             |
+| *Bacteroides vulgatus*             | @arnold1933            |
+| *Bacteroides thetaiotaomicron*     | @arnold1933, @cato1976 |
+| *Bacteroides stercoris*            | @johnson1986           |
+| *Bacteroides plebeius*             | @kitahara2005          |
+| *Bacteroides coprocola*            | @kitahara2005          |
+| *Bacteroides eggerthii*            | @holdeman1974          |
+| *Butyricicoccus faecihominis*      | @takada2016            |
+| *Coprobacter fastidiosus*          | @shkoporov2013         |
+| *Escherichia-Shigella coli*        | @devanga2018           |
+| *Intestinimonas timonensis*        | @durand2017            |
+| *Intestinimonas butyriciproducens* | @klaring2013           |
+| *Parabacteroides merdae*           | @sakamoto2006          |
+| *Porphyromonas asaccharolytica*    | @shan1988              |
+| *Prevotella bivia*                 | @shan1990              |
+| *Prevotella disiens*               | @shan1990              |
+| *Prevotella buccalis*              | @shan1990              |
+| *Prevotella amnii*                 | @lawson2008            |
+
+: Species of present bacteria with a known human origin. {#tbl-bacteria}
+
+### Where were these bacteria detected? When?
+
+```{r}
+positive_samples <- 
+  prokaryotes |> 
+  filter(
+    genus == "Alistipes" & species %in% c("indistinctus", "onderdonkii", "timonensis") |
+    genus == "Bacteroides" & species %in% c(
+      "dorei", "vulgatus", "thetaiotaomicron", "stercoris", "plebeius", "coprocola", "eggerthii"
+      ) |
+    genus == "Butyricicoccus" & species %in% c("faecihominis") |
+    genus == "Coprobacter" & species %in% c("fastidiosus") |
+    genus == "Escherichia-Shigella" & species %in% c("coli") |
+    genus == "Intestinimonas" & species %in% c("timonensis", "butyriciproducens") |
+    genus == "Parabacteroides" & species %in% c("merdae") |
+    genus == "Prevotella" & species %in% c("bivia", "disiens", "buccalis", "amnii") |
+    genus == "Porphyromonas" & species %in% c("asaccharolytica")
+  ) |>
+  mutate(key = make_key(year, month, location)) |> 
+  pull(sample)
+
+samples |> 
+  mutate(hb = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
+  ggplot(aes(x = date, y = fct_rev(location), fill = hb)) +
+  geom_point(shape = 23, color = "black", size = 3) +
+  scale_x_datetime(date_labels = "%b %Y") +
+  scale_y_discrete(labels = labels_location) +
+  scale_fill_discrete(labels = labels_season) +
+  guides(fill = guide_legend(nrow = 1)) +
+  theme_classic() +
+  theme(
+    axis.title = element_blank(), legend.title = element_blank(),
+    legend.position = "inside", legend.position.inside = c(.83, .9),
+    legend.background = element_rect(color = "black")
+  )
+```
+
+### Are there compositional differences between samples?
+
+```{r}
+prokaryotes |>
+  mutate(hb = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
+  mutate(
+    order =
+      fct_lump_n(order, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+    ) |> 
+  ggplot(aes(x = sample, fill = order)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  facet_grid(
+    . ~ hb, scales = "free_x", space = "free_x"
+  ) +
+  scale_x_discrete(name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  labs(y = "Prokaryotic relative abundance", fill = "Rate (%)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
+```{r}
+eukaryotes |>
+  mutate(hb = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
+  mutate(
+    class =
+      fct_lump_n(class, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+    ) |> 
+  ggplot(aes(x = sample, fill = class)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  facet_grid(
+    . ~ hb, scales = "free_x", space = "free_x"
+  ) +
+  scale_x_discrete(name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  labs(y = "Eukaryotic relative abundance", fill = "Rate (%)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+

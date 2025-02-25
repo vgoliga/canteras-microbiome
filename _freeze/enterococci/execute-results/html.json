@@ -1,0 +1,17 @@
+{
+  "hash": "08aae60f353bb26958202c6c332f4af1",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Enterococci\"\n---\n\n*Enterococcus* is a genus of bacteria widely used as an indicator of fecal contamination. Standard biochemical tests and culturing methods are used to establish the amount of colony forming units (CFU) for an amount of sampled volume of water. Public regulations define threshold values for enterococci concentration to assets water quality, and many bathing zones are closed because they don't meet hygienic criteria. In a review study, @peter2025 claimed that sewage discharge from human and animal wastewaters is the primary source of enterococci. They also proposed heavy rainfall and storms as key drivers of acute contamination events in coastal waters.\n\n\n\n## When did the contamiantion events happened in El Confital?\n\nAs observed in figure @fig-time, 2022 was a year of noticeable contamination events.\n\n::: {.cell}\n::: {.cell-output-display}\n![Temporal evolution of enterococci colony forming units in El Confital.](enterococci_files/figure-html/fig-time-1.png){#fig-time width=672}\n:::\n:::\n\n## How does this data overlap with our mcirobiome samples?\n\n@fig-overlap shows which samples are more likely affected by fecal contamination events.\n\n::: {.cell}\n::: {.cell-output-display}\n![Overlay of contamination events with microbiome sample collection.](enterococci_files/figure-html/fig-overlap-1.png){#fig-overlap width=672}\n:::\n:::",
+    "supporting": [
+      "enterococci_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -25,27 +25,19 @@ website:
     style: floating
     contents:
       - index.qmd
-      - section: "Analysis"
+      - section: "What did we measure?"
         href: temperatures.qmd
         contents: 
           - temperatures.qmd
           - nutrients.qmd
           - cells.qmd
           - enterococci.qmd
-          - section: "Amplicon Sequence Variants"
-            href: samples.qmd
+          - section: "Microbiome composition"
+            href: asvs.qmd
             contents: 
-              - samples.qmd
-              - asv-overview.qmd
-              - section: "Community Composition"
-                href: prokaryotes.qmd
-                contents: 
-                - prokaryotes.qmd
-                - eukaryotes.qmd
-              - section: "Contamination Indicators"
-                href: bacterial-indexes.qmd
-                contents: 
-                - bacterial-indexes.qmd
+              - asvs.qmd
+              - taxonomy.qmd
+              - indexes.qmd
 
 format:
   html:

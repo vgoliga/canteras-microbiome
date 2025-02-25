@@ -1,0 +1,200 @@
+---
+title: "Amplicon Sequence Variants"
+---
+
+Target genome region during polymerase chain reaction (PCR) divides the data into two major communities. These regions of rRNA are 16S and 18S, which correspond to prokaryotic and eukaryotic ribosomes, respectively. Each sequence produces an amplicon sequence variants (ASVs), which represent the fundamental observational units of our database. An ASV normally can be mapped to an individual known taxa ---we will explore taxonomic diversity in [Community Composition][community-composition.qmd]---. But it can also happens that some sequences do not correspond to any known taxa.
+
+```{r}
+#| label: setup
+#| include: false
+
+Sys.setlocale("LC_TIME", "en_US.utf8")
+
+library(tidyverse)
+library(ggridges)
+library(gt)
+library(here)
+
+source(here("_common.R"))
+
+samples <-
+  read_csv(here("data", "samples.csv"), col_types = cols(location = col_factor(levels = locations))) |> 
+  mutate(date = make_datetime(year, month, day)) |> 
+  mutate(season = make_season(date))
+
+prokaryotes <- 
+  read_csv(here("data", "prokaryotes.csv")) |>
+  mutate_asv_rate() |> 
+  mutate(community = "Prokaryotic", .before = 1)
+
+eukaryotes <- 
+  read_csv(here("data", "eukaryotes.csv")) |>
+  mutate_asv_rate() |> 
+  mutate(community = "Eukaryotic", .before = 1)
+
+asvs <- 
+  prokaryotes |> 
+  bind_rows(eukaryotes) |>
+  count(community, asv, encounters, rate_pct, rate, wt = reads, name = "reads")
+
+diversities <- 
+  prokaryotes |>  
+  bind_rows(eukaryotes) |> 
+  left_join(samples, by = join_by(sample)) |> 
+  mutate(p = reads / sum(reads), .by = c(community, sample), .after = reads) |> 
+  group_by(community, sample, location, date, season) |> 
+  summarize(
+    shannon = - sum(p * log(p)),
+    equitability = shannon / log(n()),
+    .groups = "drop"
+  )
+```
+
+## Are all taxa equally common?
+
+Encounters refer to the number of samples in which a taxon was found. This count ranges between 47 encounters ---the maximum number of samples--- and 1. Encounters are indicative of taxon rarity, ASVs encountered many times are considered common while those encountered a few times are considered uncommon. We can easily calculate de probability of encountering each ASV by diving the number of encounters by the total number of repetitions. To further facilitate the analysis of ASV rate, it was arbitrarily decided to bin the probabilities into 4 equally spaced ranges of 25 %. These ranges of rate are 0--25 %, 25--50 %, 50--75 % and 75--100 %.
+
+```{r}
+#| label: fig-encounters
+#| fig-cap: Number of amplicon sequence variants by their encounter count. Vertical axis in logarithmic scale.
+
+asvs |>
+  ggplot(aes(x = encounters)) +
+  geom_bar(aes(fill = community), show.legend = F) +
+  facet_wrap(~ community, ncol = 1, scale = "free_y") +
+  scale_x_continuous(breaks = seq(1, 47, 2)) +
+  scale_y_log10() +
+  labs(x = "Encounters", y = "ASVs (n)") +
+  theme_classic()
+```
+
+
+
+```{r}
+#| label: fig-rate
+#| fig-cap: Number of amplicon sequence variants in each rate range. Vertical axis in logarithmic scale.
+
+asvs |>
+  ggplot(aes(x = rate)) +
+  geom_bar(aes(fill = community), show.legend = F) +
+  facet_wrap(~ community) +
+  scale_y_log10() +
+  labs(x = "Rate (%)", y = "ASVs (n)") +
+  theme_classic()
+```
+
+## Are ASVs equally abundant?
+
+The number of reads each taxon has is directly related to its abundance within each particular sample. Relative abundance is preferred over reads because not all samples contained the same number of total ASV reads (@fig-reads). This inconsistency can be misleading when comparing data from different samples @gloor2017. Relative abundance is easily computed by dividing the number of reads of a certain taxon by the total ASV reads within the sample. @fig-ridges shows that, overall, rarer taxa are less abundant. Note that, as stated above, there are far more data points in singular and recurring categories than in the ubiquitous category. Longer right tails in infrequent ASV distribution indicate exceptional cases where rare taxa become predominant in the sample. Samples dominated by rare taxa indicate a community response driven by environmental changes.
+
+```{r}
+#| label: fig-reads
+#| fig-cap: Bar plot of total number of reads for each rate category.
+
+asvs |> 
+  ggplot(aes(x = rate)) +
+  geom_bar(aes(weight = reads, fill = community), show.legend = F) +
+  facet_wrap(~ community, scales = "free_y") +
+  labs(x = "Rate (%)", y = "Reads (n)") +
+  theme_classic()
+```
+
+
+
+```{r}
+#| label: fig-violin
+#| fig-cap: Violin plot showing the distribution of taxon relative abundance by rate. All data points are represented, with close to 10⁵ observations.
+
+asvs |>
+  ggplot(aes(x = rate, y = reads)) +
+  geom_violin(aes(fill = community), show.legend = F) +
+  scale_y_log10(labels = scales::label_number()) +
+  facet_wrap(~ community) +
+  labs(x = "rate (%)", y = "Reads (n)") +
+  theme_classic()
+```
+
+```{r}
+#| label: fig-ridges
+#| fig-cap: Density function distribution of amplicon sequence variants relative abundance by encounter rate. All data points are represented, with close to 10⁵ observations. Horizontal axis in logarithmic scale.
+
+asvs |>
+  ggplot(aes(x = reads, y = rate)) +
+  geom_density_ridges(aes(fill = community), scale = 2, bandwidth = .15, show.legend = F) +
+  facet_wrap(~ community) +
+  scale_x_log10(labels = scales::label_number(), expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
+  labs(x = "Reads (n)", y = "Rate (%)") +
+  theme_classic()
+```
+
+```{r}
+#| label: tbl-summary
+#| tbl-cap: Summary table of amplicon sequence variants and their number of reads by encounter rates.
+
+asvs |> 
+  group_by(community, rate) |> 
+  summarize(n = n(), reads = sum(reads), .groups = "drop_last") |> 
+  mutate(n_pct = n / sum(n) * 100, .after = n) |>
+  mutate(reads_pct = reads / sum(reads) * 100, .after = reads) |>
+  gt(rowname_col = "rate", groupname_col = "community") |> 
+  cols_label(
+    n         = md("**ASVs (n)**"),
+    n_pct     = md("**ASVs (%)**"),
+    reads     = md("**Reads (n)**"),
+    reads_pct = md("**Reads (%)**")
+  ) |>
+  fmt_number(columns = c(n_pct, reads_pct), decimals = 2) |> 
+  summary_rows(columns = c(n, reads), fns = list("TOTAL" = ~ sum(.))) |> 
+  tab_options(table.width = pct(100))
+```
+
+## How does ecological diversity vary over time?
+
+Community diversity is an indicator of overall microbiome health and fitness. Therefore, relative low Shannon Index values signal community degrading processes, including wastewater intrusion. @fig-shannon-season point again to our suspicion that the summer 2022 was affected by contamination.
+
+```{r}
+#| label: fig-shannon-space
+#| fig-cap: Box plots of Shannon diversity index spatial distribution
+
+diversities |> 
+  filter_analysis() |> 
+  ggplot(aes(x = location, y = shannon)) +
+  geom_boxplot(aes(fill = community), show.legend = F) +
+  facet_wrap(~ community, scales = "free_y") +
+  scale_x_discrete(labels = labels_location, name = NULL) +
+  labs(y = "Shannon diversity index") +
+  theme_classic()
+```
+
+```{r}
+#| label: fig-shannon-season
+#| fig-cap: Box plots of Shannon diversity index seasonal distribution.
+
+diversities |> 
+  filter_analysis() |> 
+  ggplot(aes(x = season, y = shannon)) +
+  geom_boxplot(aes(fill = community), show.legend = F) +
+  facet_wrap(~ community, scales = "free_y") +
+  scale_x_discrete(labels = labels_season, name = NULL) +
+  labs(y = "Shannon diversity index") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 20, vjust = .5))
+```
+
+```{r}
+diversities |> 
+  filter_analysis() |> 
+  ggplot(aes(x = date, y = shannon)) +
+  geom_jitter(aes(color = location, shape = location), size = 2) +
+  scale_shape_discrete(labels = labels_location, name = NULL) +
+  scale_color_discrete(labels = labels_location, name = NULL) +
+  facet_wrap(~ community, scales = "free_y") +
+  scale_x_datetime(date_labels = "%b %Y", name = NULL) +
+  labs(y = "Shannon Index", color = "Community", shape = "Location") +
+  theme_classic() +
+  theme(
+    legend.position = "inside", legend.position.inside = c(.63, .86),
+    legend.background = element_rect(color = "black")
+  )
+```

@@ -1,6 +1,12 @@
 ---
-title: "Cells"
+title: "Citometry"
 ---
+
+Cytometry enable us to quantitatively measure cell concentration based on parameters like cell size, color, morphology and DNA content. This technology was developed in the field of human medicine and is now applied to marine sciences for microplankton counting and characterization. In this project, we classified cell types in three groups:
+
+ - Eukaryotic (size criteria): Nanoeukaryotes, and picoeukaryotes.
+ - Cyanobacteria (pigment criteria): *Prochlorococcus*, and *Synechococcus* genuses.
+ - DNA (content criteria): High nucleic acid (HNA), and low nucleic acid (LNA).
 
 ```{r}
 #| label: setup
@@ -30,34 +36,68 @@ filter_dna <- function(data){
 }
 ```
 
-## Introduction
-
-Cytometry enable us to quantitatively measure cell concentration based on parameters like cell size, color, morphology and DNA content. This technology was developed in the field of human medicine and is now applied to marine sciences for microplankton counting and characterization. In this project, we classified cell types in three groups:
-
- - Eukaryotic (size criteria): Nanoeukaryotes, and picoeukaryotes.
- - Cyanobacteria (pigment criteria): *Prochlorococcus*, and *Synechococcus* genuses.
- - DNA (content criteria): High nucleic acid (HNA), and low nucleic acid (LNA).
+## How much of each microplankton group was there?
 
 ```{r}
 #| label: fig-overview
-#| fig-cap: Density functions for all celltypes measured. Horizontal axis in logarithmic scale.
+#| fig-cap: Density functions for all microplankton groups measured. Horizontal axis in logarithmic scale.
 
 cells |> 
   filter(!is.na(conc) & conc > 0) |> 
   ggplot(aes(x = conc, y = celltype)) +
   geom_density_ridges(aes(fill = celltype), alpha = .5, scale = 2, bandwidth = .09, show.legend = F) +
-  scale_y_discrete(labels = labels_celltype, name = NULL) +
-  scale_x_log10(labels = scales::label_number()) +
+  scale_y_discrete(labels = labels_celltype, name = NULL, expand = c(0, 0)) +
+  scale_x_log10(labels = scales::label_number(), expand = c(0, 0)) +
   coord_cartesian(clip = "off") +
   labs(x = "Concentration (cells/mL)") +
   theme_classic()
 ```
 
-## Distribution
+```{r}
+#| label: fig-overview-2
+#| fig-cap: Median microplanktonic concentrations with min-max ranges across seasons. Vertical axis in logarithmic scale.
+#| warning: false
 
-### Eukaryotic
+cells |> 
+  filter(!is.na(season) & date < ymd("2023-04-01")) |> 
+  ggplot(aes(x = season, y = conc, color = celltype)) +
+  geom_pointrange(stat = "summary", position = position_dodge(width = 1), fun = median, fun.min = min, fun.max = max) +
+  scale_x_discrete(labels = labels_season, name = NULL) +
+  scale_y_log10(labels = scales::label_number()) +
+  scale_color_discrete(labels = labels_celltype, name = NULL) +
+  labs(y = "Concentration (cells/mL)") +
+  theme_classic() +
+  theme(legend.background = element_rect(color = "black"))
+```
 
-For both nano- and picoeukaryotes, @fig-eu-space reveals an overall lower concentration in Peña la Vieja than in the rest of stations. Another visible patter in the figure comes from the gap between Las Canteras and El Confital. Eukaryotes are less abundant in El Confital, it is more extreme for El Confital 1 station in terms of nanoeukaryotes.
+## Which were the differences between sampling stations?
+
+<!-- For both nano- and picoeukaryotes, @fig-eu-space reveals an overall lower concentration in Peña la Vieja than in the rest of stations. Another visible patter in the figure comes from the gap between Las Canteras and El Confital. Eukaryotes are less abundant in El Confital, it is more extreme for El Confital 1 station in terms of nanoeukaryotes. -->
+
+Peña la Vieja is once again brought to our attention in @fig-cy-space. We registered a minimum for both genuses of cyanobacteria. The relative lower cell concentration in El Confital compared to Las Canteras is also evident, specially so for *Synechoccocus*.
+
+The same pattern observed previously in cyanobacteria and eukaryotes repeats when DNA content is considered. @fig-dna-space illustrates Peña la Vieja as having a relatively lower cell concentration. The gap between Las Canteras and El Confital is also present, with El Confital at relative lower values. Within El COnfital, however, El Confital 2 is significantly lower than El Confital 1.
+
+```{r}
+#| label: fig-eu-space-2
+#| fig-cap: Organic nutrient distribution across sampling stations. Horizontal axis in logarithmic scale.
+
+cells |> 
+  filter(conc > 0) |> 
+  filter_eukaryotes() |> 
+  ggplot(aes(x = conc, y = fct_rev(location), fill = celltype)) +
+  geom_density_ridges(aes(fill = celltype), scale = 3, bandwidth = .1) +
+  scale_fill_discrete(labels = labels_celltype, name = NULL) +
+  scale_x_log10(labels = scales::label_number(), expand = c(0, 0)) +
+  scale_y_discrete(labels = labels_location, name = NULL, expand = c(0, 0)) +
+  labs(x = "Concentration (μM)") +
+  coord_cartesian(clip = "off") +
+  theme_classic() +
+  theme(
+    legend.position = "inside", legend.position.inside = c(.15, .9),
+    legend.background = element_rect(color = "black")
+    )
+```
 
 ```{r}
 #| label: fig-eu-space
@@ -68,7 +108,6 @@ cells |>
   filter(!is.na(conc)) |> 
   ggplot(aes(x = location, y = conc)) +
   geom_boxplot(aes(fill = celltype), outliers = F, show.legend = F) +
-  geom_jitter(alpha = .3) +
   facet_wrap(~ celltype, scales = "free_y", labeller = as_labeller(labels_celltype)) +
   scale_x_discrete(labels = labels_location, name = NULL) +
   scale_y_log10() +
@@ -77,7 +116,51 @@ cells |>
   theme(axis.text.x = element_text(angle = 90, vjust = .5))
 ```
 
+```{r}
+#| label: fig-cy-space
+#| fig-cap: Box plots of cyanobacteria distribution across measuring stations. Vertical axis in logarithmic scale.
+
+cells |>
+  filter_cyanobacteria() |> 
+  filter(!is.na(conc)) |> 
+  ggplot(aes(x = location, y = conc)) +
+  geom_boxplot(aes(fill = celltype), outliers = F, show.legend = F) +
+  facet_wrap(~ celltype, scales = "free_y", labeller = as_labeller(labels_celltype)) +
+  scale_x_discrete(labels = labels_location, name = NULL) +
+  scale_y_log10() +
+  labs(y = "Concentration (cells/mL)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
+```{r}
+#| label: fig-dna-space
+#| fig-cap: Box plots of DNA content distribution across measuring stations. Vertical axis in logarithmic scale.
+
+cells |>
+  filter_dna() |> 
+  filter(!is.na(conc)) |> 
+  ggplot(aes(x = location, y = conc)) +
+  geom_boxplot(aes(fill = celltype), outliers = F, show.legend = F) +
+  facet_wrap(~ celltype, scales = "free_y", labeller = as_labeller(labels_celltype)) +
+  scale_x_discrete(labels = labels_location, name = NULL) +
+  scale_y_log10() +
+  labs(y = "Concentration (cells/mL)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
+## How did microplankton concentration vary over time?
+
 @fig-eu-time shows minimum eukaryotic cell count during the spring 2022. Also worth remarking, values tend to decrease between January 2022 and October 2022 for both size scales.
+
+The decreasing tendency mentioned before is not symmetrical between nano and pico scales. As observed in @fig-eu-seasons, picoeukaryotes concentration is stable after summer 2022 whereas nanoeukaryotic cell count increased drastically in autumn 2022.
+
+In @fig-cy-time we observe the minimum at Peña la Vieja during late winter 2022. At El Confital 1, *Synechoccocus* count fell to a minimum while *Prochlorococcus* remained at middle values.
+
+@fig-cy-seasons shows a decoupling between the otherwise highly correlated concentrations of both genuses.
+
+When seasonal variation is considered (@fig-dna-time), we registered minimum values in spring 2022 for HNA. Contrarily, the minimum for LNA happened before, in autumn 2022. This inverse correlation between HNA and LNA can be better observed in @fig-dna-seasons. There is an evident opposing tendency between HNA and LNA cells due to their reproductive strategies. It has been proposed by @santos2019 that HNA bacteria flourish during fecal contamination events. This could be the case at hand during summer 2022, when we observed maximum values for HNA.
 
 ```{r}
 #| label: fig-eu-time
@@ -102,8 +185,6 @@ cells |>
   )
 ```
 
-The decreasing tendency mentioned before is not symmetrical between nano and pico scales. As observed in @fig-eu-seasons, picoeukaryotes concentration is stable after summer 2022 whereas nanoeukaryotic cell count increased drastically in autumn 2022.
-
 ```{r}
 #| label: fig-eu-seasons
 #| fig-cap: Box plots of eukaryotic cells seasonal distribution. Vertical axis in logarithmic scale.
@@ -113,7 +194,6 @@ cells |>
   filter(!is.na(season) & !is.na(conc)) |> 
   ggplot(aes(x = season, y = conc, fill = celltype)) +
   geom_boxplot(outliers = F) +
-  geom_jitter(alpha = .3) +
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
   scale_fill_discrete(labels = labels_celltype) +
@@ -123,31 +203,6 @@ cells |>
     legend.title = element_blank(), legend.background = element_rect(color = "black", linewidth = .5),
     legend.position = "inside", legend.position.inside = c(.9, .1))
 ```
-
-
-### Cyanobacteria distribution
-
-Peña la Vieja is once again brought to our attention in @fig-cy-space. We registered a minimum for both genuses of cyanobacteria. The relative lower cell concentration in El Confital compared to Las Canteras is also evident, specially so for *Synechoccocus*.
-
-```{r}
-#| label: fig-cy-space
-#| fig-cap: Box plots of cyanobacteria distribution across measuring stations. Vertical axis in logarithmic scale.
-
-cells |>
-  filter_cyanobacteria() |> 
-  filter(!is.na(conc)) |> 
-  ggplot(aes(x = location, y = conc)) +
-  geom_boxplot(aes(fill = celltype), outliers = F, show.legend = F) +
-  geom_jitter(alpha = .3) +
-  facet_wrap(~ celltype, scales = "free_y", labeller = as_labeller(labels_celltype)) +
-  scale_x_discrete(labels = labels_location, name = NULL) +
-  scale_y_log10() +
-  labs(y = "Concentration (cells/mL)") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
-```
-
-In @fig-cy-time we observe the minimum at Peña la Vieja during late winter 2022. At El Confital 1, *Synechoccocus* count fell to a minimum while *Prochlorococcus* remained at middle values.
 
 ```{r}
 #| label: fig-cy-time
@@ -168,11 +223,9 @@ cells |>
   theme(
     legend.position = "inside", legend.position.inside = c(.64, .87),
     axis.text.x = element_text(angle = 20, vjust = .5),
-    legend.background = element_rect(color = "black", linewidth = .2)
+    legend.background = element_rect(color = "black")
   )
 ```
-
-@fig-cy-seasons shows a decoupling between the otherwise highly correlated concentrations of both genuses.
 
 ```{r}
 #| label: fig-cy-seasons
@@ -183,7 +236,6 @@ cells |>
   filter(!is.na(season) & !is.na(conc)) |> 
   ggplot(aes(x = season, y = conc, fill = celltype)) +
   geom_boxplot(outliers = F) +
-  geom_jitter(alpha = .3) +
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
   scale_fill_discrete(labels = labels_celltype, name = NULL) +
@@ -193,30 +245,6 @@ cells |>
     legend.background = element_rect(color = "black", linewidth = .5),
     legend.position = "inside", legend.position.inside = c(.15, .9))
 ```
-
-### High and Low nucleic acid plankton distribution
-
-The same pattern observed previously in cyanobacteria and eukaryotes repeats when DNA content is considered. @fig-dna-space illustrates Peña la Vieja as having a relatively lower cell concentration. The gap between Las Canteras and El Confital is also present, with El Confital at relative lower values. Within El COnfital, however, El Confital 2 is significantly lower than El Confital 1.
-
-```{r}
-#| label: fig-dna-space
-#| fig-cap: Box plots of DNA content distribution across measuring stations. Vertical axis in logarithmic scale.
-
-cells |>
-  filter_dna() |> 
-  filter(!is.na(conc)) |> 
-  ggplot(aes(x = location, y = conc)) +
-  geom_boxplot(aes(fill = celltype), outliers = F, show.legend = F) +
-  geom_jitter(alpha = .3) +
-  facet_wrap(~ celltype, scales = "free_y", labeller = as_labeller(labels_celltype)) +
-  scale_x_discrete(labels = labels_location, name = NULL) +
-  scale_y_log10() +
-  labs(y = "Concentration (cells/mL)") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
-```
-
-When seasonal variation is considered (@fig-dna-time), we registered minimum values in spring 2022 for HNA. Contrarily, the minimum for LNA happened before, in autumn 2022. This inverse correlation between HNA and LNA can be better observed in @fig-dna-seasons. There is an evident opposing tendency between HNA and LNA cells due to their reproductive strategies. It has been proposed by @santos2019 that HNA bacteria flourish during fecal contamination events. This could be the case at hand during summer 2022, when we observed maximum values for HNA.
 
 ```{r}
 #| label: fig-dna-time
@@ -250,7 +278,6 @@ cells |>
   filter(!is.na(season) & !is.na(conc)) |> 
   ggplot(aes(x = season, y = conc, fill = celltype)) +
   geom_boxplot(outliers = F) +
-  geom_jitter(alpha = .3) +
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
   scale_fill_discrete(labels = labels_celltype, name = NULL) +
@@ -258,5 +285,5 @@ cells |>
   theme_classic() +
   theme(
     legend.background = element_rect(color = "black", linewidth = .5),
-    legend.position = "inside", legend.position.inside = c(.1, .9))
+    legend.position = "inside", legend.position.inside = c(.1, .1))
 ```

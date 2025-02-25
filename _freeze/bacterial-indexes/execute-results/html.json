@@ -1,0 +1,17 @@
+{
+  "hash": "a586a26f64c2dece700625724398a3bf",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Bacterial Indexes\"\n---\n\n\n\n| Index | Formula | Reference |\n|-------|:--------------------------:|------------------|\n| A:S   | $\\frac{\\text{Alteromonas}}{\\text{SAR11}}$                                          | [@ferrera2016] |\n| AO:S  | $\\frac{\\text{Alteromonas+Oceanospirillum}}{\\text{SAR11}}$                          | [@ferrera2016] |\n| BNγ:β | $\\frac{\\text{Bacteroidetes+Nitrospira+γ-Proteobacteria}}{\\text{β-Proteobacteria}}$ | [@garrido2014] |\n| BBC:α |  $\\frac{\\text{Bacilli+Bacteroidetes+Clostridia}}{\\text{α-Proteobacteria}}$         | [@wu2010]      |\n \n## Overview\n\n::: {.cell}\n::: {.cell-output-display}\n![](bacterial-indexes_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n### Distribution\n\n::: {.cell}\n::: {.cell-output-display}\n![](bacterial-indexes_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](bacterial-indexes_files/figure-html/unnamed-chunk-4-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](bacterial-indexes_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n\n",
+    "supporting": [
+      "bacterial-indexes_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
