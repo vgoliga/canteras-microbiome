@@ -26,6 +26,24 @@ eukaryotes <-
   read_csv(here("data", "eukaryotes.csv")) |> 
   left_join(samples, by = join_by(sample)) |> 
   mutate_asv_rate()
+
+positive_samples <- 
+  prokaryotes |> 
+  filter(
+    genus == "Alistipes" & species %in% c("indistinctus", "onderdonkii", "timonensis") |
+    genus == "Bacteroides" & species %in% c(
+      "dorei", "vulgatus", "thetaiotaomicron", "stercoris", "plebeius", "coprocola", "eggerthii"
+      ) |
+    genus == "Butyricicoccus" & species %in% c("faecihominis") |
+    genus == "Coprobacter" & species %in% c("fastidiosus") |
+    genus == "Escherichia-Shigella" & species %in% c("coli") |
+    genus == "Intestinimonas" & species %in% c("timonensis", "butyriciproducens") |
+    genus == "Parabacteroides" & species %in% c("merdae") |
+    genus == "Prevotella" & species %in% c("bivia", "disiens", "buccalis", "amnii") |
+    genus == "Porphyromonas" & species %in% c("asaccharolytica")
+  ) |>
+  mutate(key = make_key(year, month, location)) |> 
+  pull(sample)
 ```
 
 ## How did the microbiome composition change over time?
@@ -65,7 +83,7 @@ eukaryotes |>
     ) |> 
   ggplot(aes(x = season, fill = class)) +
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .3) +
-  scale_fill_brewer(palette = "Set3", name = NULL) +
+  scale_fill_brewer(palette = "Paired", name = NULL) +
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
   labs(y = "Eukaryotic relative abundance") +
@@ -111,12 +129,91 @@ eukaryotes |>
     ) |> 
   ggplot(aes(x = location, fill = class)) +
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .3) +
-  scale_fill_brewer(palette = "Set3", name = NULL) +
+  scale_fill_brewer(palette = "Paired", name = NULL) +
   scale_x_discrete(labels = labels_location, name = NULL) +
   scale_y_continuous(labels = scales::percent) +
   labs(y = "Eukaryotic relative abundance") +
   theme_classic()
 ```
+
+## With which frequency was each taxa encountered?
+
+```{r}
+prokaryotes |>
+  filter_analysis() |> 
+  mutate(
+    order =
+      fct_lump_n(order, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+  ) |> 
+  ggplot(aes(x = rate, fill = order)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  labs(y = "Prokaryotic relative abundance", x = "Rate (%)") +
+  theme_classic()
+```
+
+```{r}
+eukaryotes |>
+  filter_analysis() |> 
+  mutate(
+    class =
+      fct_lump_n(class, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+  ) |> 
+  ggplot(aes(x = rate, fill = class)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Paired", name = NULL) +
+  labs(y = "Eukaryotic relative abundance", x = "Rate (%)") +
+  theme_classic()
+```
+### Did taxonomical composition of rare taxa change over time?
+
+```{r}
+prokaryotes |>
+  filter_analysis() |> 
+  mutate(
+    order =
+      fct_lump_n(order, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+  ) |> 
+  ggplot(aes(x = rate, fill = order)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  facet_grid(. ~ season, scale = "free_x", labeller = as_labeller(labels_season)) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  labs(y = "Prokaryotic relative abundance", x = "Rate (%)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+```{r}
+eukaryotes |>
+  filter_analysis() |> 
+  mutate(
+    class =
+      fct_lump_n(class, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+  ) |> 
+  ggplot(aes(x = rate, fill = class)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  facet_grid(. ~ season, scale = "free_x", labeller = as_labeller(labels_season)) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Paired", name = NULL) +
+  labs(y = "Eukaryotic relative abundance", x = "Rate (%)") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
 
 ## Which samples were the most unusual?
 
@@ -156,7 +253,7 @@ eukaryotes |>
   theme(axis.text.x = element_text(angle = 90, vjust = .5))
 ```
 
-## Did we find bacteria from human excretions?
+## Did we find bacteria from human origin?
 
 Yes! All bacterial species in @tbl-bacteria were detected in the monitoring and are also documented to come from the human gastrointestinal track or other bodily fluids. The most well-known of which is *Escherichia coli*, although there are many more species of bacteria living inside our bodies.
 
@@ -167,7 +264,7 @@ Yes! All bacterial species in @tbl-bacteria were detected in the monitoring and 
 | *Alistipes timonensis*             | @lagier2012            |
 | *Bacteroides dorei*                | @bakir2006             |
 | *Bacteroides vulgatus*             | @arnold1933            |
-| *Bacteroides thetaiotaomicron*     | @arnold1933, @cato1976 |
+| *Bacteroides thetaiotaomicron*     | @cato1976              |
 | *Bacteroides stercoris*            | @johnson1986           |
 | *Bacteroides plebeius*             | @kitahara2005          |
 | *Bacteroides coprocola*            | @kitahara2005          |
@@ -189,27 +286,9 @@ Yes! All bacterial species in @tbl-bacteria were detected in the monitoring and 
 ### Where were these bacteria detected? When?
 
 ```{r}
-positive_samples <- 
-  prokaryotes |> 
-  filter(
-    genus == "Alistipes" & species %in% c("indistinctus", "onderdonkii", "timonensis") |
-    genus == "Bacteroides" & species %in% c(
-      "dorei", "vulgatus", "thetaiotaomicron", "stercoris", "plebeius", "coprocola", "eggerthii"
-      ) |
-    genus == "Butyricicoccus" & species %in% c("faecihominis") |
-    genus == "Coprobacter" & species %in% c("fastidiosus") |
-    genus == "Escherichia-Shigella" & species %in% c("coli") |
-    genus == "Intestinimonas" & species %in% c("timonensis", "butyriciproducens") |
-    genus == "Parabacteroides" & species %in% c("merdae") |
-    genus == "Prevotella" & species %in% c("bivia", "disiens", "buccalis", "amnii") |
-    genus == "Porphyromonas" & species %in% c("asaccharolytica")
-  ) |>
-  mutate(key = make_key(year, month, location)) |> 
-  pull(sample)
-
 samples |> 
-  mutate(hb = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
-  ggplot(aes(x = date, y = fct_rev(location), fill = hb)) +
+  mutate(bho = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
+  ggplot(aes(x = date, y = fct_rev(location), fill = bho)) +
   geom_point(shape = 23, color = "black", size = 3) +
   scale_x_datetime(date_labels = "%b %Y") +
   scale_y_discrete(labels = labels_location) +
@@ -227,7 +306,7 @@ samples |>
 
 ```{r}
 prokaryotes |>
-  mutate(hb = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
+  mutate(bho = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
   mutate(
     order =
       fct_lump_n(order, 11) |>
@@ -238,7 +317,7 @@ prokaryotes |>
   ggplot(aes(x = sample, fill = order)) +
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
   facet_grid(
-    . ~ hb, scales = "free_x", space = "free_x"
+    . ~ bho, scales = "free_x", space = "free_x"
   ) +
   scale_x_discrete(name = NULL) +
   scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
@@ -250,7 +329,7 @@ prokaryotes |>
 
 ```{r}
 eukaryotes |>
-  mutate(hb = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
+  mutate(bho = if_else(sample %in% c(positive_samples), "Positive", "Negative")) |>
   mutate(
     class =
       fct_lump_n(class, 11) |>
@@ -261,11 +340,11 @@ eukaryotes |>
   ggplot(aes(x = sample, fill = class)) +
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
   facet_grid(
-    . ~ hb, scales = "free_x", space = "free_x"
+    . ~ bho, scales = "free_x", space = "free_x"
   ) +
   scale_x_discrete(name = NULL) +
   scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
-  scale_fill_brewer(palette = "Set3", name = NULL) +
+  scale_fill_brewer(palette = "Paired", name = NULL) +
   labs(y = "Eukaryotic relative abundance", fill = "Rate (%)") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = .5))
