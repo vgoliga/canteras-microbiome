@@ -1,6 +1,8 @@
 ---
-title: "Bacterial Indexes"
+title: "Bacterial ratios"
 ---
+
+@sagovamareckova2021
 
 ```{r}
 #| label: setup
@@ -19,7 +21,7 @@ samples <-
   mutate(date = make_datetime(year, month, day)) |> 
   mutate(season = make_season(date))
 
-indexes <-
+ratios <-
   read_csv(here("data", "prokaryotes.csv")) |> 
   left_join(samples, by = join_by(sample)) |> 
   group_by(sample, location, date, season) |> 
@@ -28,6 +30,7 @@ indexes <-
     gamma           = sum(reads[class    == "Gammaproteobacteria"], na.rm = T),
     alteromonas     = sum(reads[genus    == "Alteromonas"],         na.rm = T),
     sar11           = sum(reads[order    == "SAR11 clade"],         na.rm = T),
+    firmicutes      = sum(reads[phylum    == "Firmicutes"],         na.rm = T),      
     oceanospirillum = sum(reads[order    == "Oceanospirillum"],     na.rm = T),
     bacteroidetes   = sum(reads[phylum   == "Bacteroidota"],        na.rm = T),
     nitrospira      = sum(reads[phylum   == "Nitrospirota"],        na.rm = T),
@@ -36,32 +39,32 @@ indexes <-
     clostridia      = sum(reads[class    == "Clostridia"],          na.rm = T)
   ) |> 
   mutate(
-    index_as   = (alteromonas) / sar11,
-    index_aos  = (alteromonas + oceanospirillum) / sar11,
-    index_bngb = (bacteroidetes + nitrospira + gamma) / burkholderiales,
-    index_bbca = (bacilli + bacteroidetes + clostridia) / alpha
+    ratio_as   = (alteromonas) / sar11,
+    ratio_bngb = (bacteroidetes + nitrospira + gamma) / burkholderiales,
+    ratio_bbca = (bacilli + bacteroidetes + clostridia) / alpha,
+    ratio_bfga = (bacteroidetes + firmicutes + gamma) / alpha
   ) |> 
-  pivot_longer(starts_with("index"), names_to = "index", names_prefix = "index_")
+  pivot_longer(starts_with("ratio"), names_to = "ratio", names_prefix = "ratio_")
 ```
 
-| Index | Formula | Reference |
-|----------------|:---------------------------------:|----------------------|
-| A:S | $\frac{\text{Alteromonas}}{\text{SAR11}}$ | [@ferrera2016] |
-| AO:S | $\frac{\text{Alteromonas+Oceanospirillum}}{\text{SAR11}}$ | [@ferrera2016] |
-| BNγ:β | $\frac{\text{Bacteroidetes+Nitrospira+γ-Proteobacteria}}{\text{β-Proteobacteria}}$ | [@garrido2014] |
-| BBC:α | $\frac{\text{Bacilli+Bacteroidetes+Clostridia}}{\text{α-Proteobacteria}}$ | [@wu2010] |
+| Ratio | Formula | Reference |
+|------------------|:-------------------------------:|---------------------|
+| A:S   | Alteromonas to SAR11 Clade | @ferrera2016 |
+| BNγ:β | Bacteroidetes, Nitrospira and Gammaproteobacteria to Betaproteobacteria | @garrido2014 |
+| BBC:α | Bacilli, Bacteroidetes and Clostridia to Alphaproteobacteria | @wu2010 |
+| BFγ:α | Bacteroidetes, Firmicutes and Gammaproteobacteria to Alphaproteobacteria | @niu2018 |
 
-## What were the ranges of these indexes?
+## What were the ranges of these ratios?
 
 ```{r}
-indexes |> 
+ratios |> 
   filter(value > 0) |> 
-  ggplot(aes(x = value, y = index)) +
-  geom_density_ridges(aes(fill = index), alpha = .5, scale = 3, bandwidth = .2, show.legend = F) +
+  ggplot(aes(x = value, y = ratio)) +
+  geom_density_ridges(aes(fill = ratio), alpha = .5, scale = 3, bandwidth = .2, show.legend = F) +
   scale_x_log10(labels = scales::label_number(), expand = c(0, 0)) +
-  scale_y_discrete(labels = labels_index, name = NULL, expand = c(0, 0)) +
+  scale_y_discrete(labels = labels_ratio, name = NULL, expand = c(0, 0)) +
   coord_cartesian(clip = "off") +
-  labs(x = "Index value") +
+  labs(x = "ratio value") +
   theme_classic()
 ```
 
@@ -70,51 +73,50 @@ indexes |>
 #| fig-cap: Median nutrient concentrations with min-max ranges across seasons. Vertical axis in logarithmic scale.
 #| warning: false
 
-indexes |> 
-  ggplot(aes(x = season, y = value, color = index)) +
+ratios |> 
+  ggplot(aes(x = season, y = value, color = ratio)) +
   geom_pointrange(stat = "summary", position = position_dodge(width = .6), fun = median, fun.min = min, fun.max = max) +
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
-  scale_color_discrete(labels = labels_index, name = NULL) +
-  labs(y = "Index value") +
+  scale_color_discrete(labels = labels_ratio, name = NULL) +
+  labs(y = "Ratio") +
   theme_classic() +
   theme(
     legend.position = "inside", legend.position.inside = c(.9, .15), 
     legend.background = element_rect(color = "black")
     )
 ```
-## How did these indexes vary across the monotring?
+
+## How did these ratios vary across the monotring?
 
 ```{r}
-indexes |>
+ratios |>
   filter(value > 0) |> 
   filter_analysis() |> 
   ggplot(aes(y = fct_rev(location), x = value)) +
-  geom_boxplot(aes(fill = index), show.legend = F) +
-  facet_wrap(~ index, scales = "free_x", labeller = as_labeller(labels_index)) +
+  geom_boxplot(aes(fill = ratio), show.legend = F) +
+  facet_wrap(~ ratio, scales = "free_x", labeller = as_labeller(labels_ratio)) +
   scale_x_log10() +
-  scale_y_discrete(labels = labels_location) +
-  labs(x = "", y = "") +
+  scale_y_discrete(labels = labels_location, name = NULL) +
+  labs(x = "Ratio") +
   theme_classic()
 ```
 
 ```{r}
-indexes |>
+ratios |>
   filter(value > 0) |> 
   filter_analysis() |> 
   ggplot(aes(x = date, y = value, shape = location, color = location)) +
   geom_jitter(size = 2) +
-  facet_wrap(~ index, scales = "free_y", labeller = as_labeller(labels_index)) +
+  facet_wrap(~ ratio, scales = "free_y", labeller = as_labeller(labels_ratio)) +
   scale_x_datetime(date_labels = "%b %Y", name = NULL) +
   scale_y_log10() +
   scale_color_discrete(labels = labels_location, name = NULL) +
   scale_shape_discrete(labels = labels_location, name = NULL) +
-  labs(y = "Index value") +
+  labs(y = "Ratio") +
   theme_classic() +
   theme(
-    legend.position = "inside", legend.position.inside = c(.1, .35), 
+    legend.position = "inside", legend.position.inside = c(.1, .34), 
     legend.background = element_rect(color = "black")
     )
 ```
-
-

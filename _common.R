@@ -114,11 +114,12 @@ labels_celltype <-
     "lna"       = "LNA Bacteria"
   )
 
-labels_index <- 
+labels_ratio <- 
   c(
     "ag"     = "α:γ",
     "as"     = "A:S",
     "aos"    = "AO:S",
     "bngb"   = "BNγ:β",
-    "bbca"   = "BBC:α"
+    "bbca"   = "BBC:α",
+    "bfga"   = "BFγ:α"
   )
