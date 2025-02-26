@@ -31,6 +31,27 @@ filter_analysis <- function(data){
     filter(date |> between(start, end))
 }
 
+filter_organic <- function(data){
+  data |> filter(formula %in% c("toc", "ton"))
+}
+
+filter_inorganic <- function(data){
+  data |>
+    filter(formula %in% c("silicate", "phosphate", "ammonium", "nitrates_and_nitrites"))
+}
+
+filter_eukaryotes <- function(data){
+  data |> filter(celltype %in% c("nanoeuka", "picoeuka"))
+}
+
+filter_cyanobacteria <- function(data){
+  data |> filter(celltype %in% c("prochloro", "synecho"))
+}
+
+filter_dna <- function(data){
+  data |> filter(celltype %in% c("hna", "lna"))
+}
+
 start <- ymd("2021-07-01")
 end <- ymd("2023-07-01")
 
