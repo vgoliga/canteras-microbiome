@@ -1,0 +1,17 @@
+{
+  "hash": "dbfbab6d9604ab6ae6de31306121bf10",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Bacterial ratios\"\n---\n\n@sagovamareckova2021\n\n\n\n| Ratio | Formula | Reference |\n|------------------|:-------------------------------:|---------------------|\n| A:S   | Alteromonas to SAR11 Clade | @ferrera2016 |\n| BNγ:β | Bacteroidetes, Nitrospira and Gammaproteobacteria to Betaproteobacteria | @garrido2014 |\n| BBC:α | Bacilli, Bacteroidetes and Clostridia to Alphaproteobacteria | @wu2010 |\n| BFγ:α | Bacteroidetes, Firmicutes and Gammaproteobacteria to Alphaproteobacteria | @niu2018 |\n\n## What were the ranges of these ratios?\n\n::: {.cell}\n::: {.cell-output-display}\n![](ratios_files/figure-html/unnamed-chunk-2-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![Median nutrient concentrations with min-max ranges across seasons. Vertical axis in logarithmic scale.](ratios_files/figure-html/fig-overview-2-1.png){#fig-overview-2 width=672}\n:::\n:::\n\n## How did these ratios vary across the monotring?\n\n::: {.cell}\n::: {.cell-output-display}\n![](ratios_files/figure-html/unnamed-chunk-4-1.png){width=672}\n:::\n:::\n\n::: {.cell}\n::: {.cell-output-display}\n![](ratios_files/figure-html/unnamed-chunk-5-1.png){width=672}\n:::\n:::\n",
+    "supporting": [
+      "ratios_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
