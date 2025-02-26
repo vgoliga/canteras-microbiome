@@ -25,15 +25,6 @@ nutrients <-
   ) |> 
   mutate(formula = fct(formula) |> fct_reorder(conc, .fun = max, .na_rm = T)) |> 
   mutate(season = make_season(date))
-
-filter_organic <- function(data){
-  data |> filter(formula %in% c("toc", "ton"))
-}
-
-filter_inorganic <- function(data){
-  data |>
-    filter(formula %in% c("silicate", "phosphate", "ammonium", "nitrates_and_nitrites"))
-}
 ```
 
 ## Did different nutrients have similar concentrations?
@@ -63,11 +54,15 @@ nutrients |>
 
 nutrients |> 
   filter(!is.na(season)) |> 
-  ggplot(aes(x = season, y = conc, color = formula)) +
-  geom_pointrange(stat = "summary", position = position_dodge(width = 1), fun = median, fun.min = min, fun.max = max) +
+  ggplot(aes(x = season, y = conc, fill = formula)) +
+  geom_pointrange(
+    stat = "summary", fun = median, fun.min = min, fun.max = max,
+    position = position_dodge(width = .6),
+    shape = 21
+  ) + 
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10(labels = scales::label_number()) +
-  scale_color_discrete(labels = labels_formula, name = NULL) +
+  scale_fill_discrete(labels = labels_formula, name = NULL) +
   labs(y = "Concentration (μM)") +
   theme_classic() +
   theme(legend.background = element_rect(color = "black"))

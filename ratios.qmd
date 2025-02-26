@@ -48,11 +48,11 @@ ratios <-
 ```
 
 | Ratio | Formula | Reference |
-|------------------|:-------------------------------:|---------------------|
-| A:S   | Alteromonas to SAR11 Clade | @ferrera2016 |
-| BNγ:β | Bacteroidetes, Nitrospira and Gammaproteobacteria to Betaproteobacteria | @garrido2014 |
-| BBC:α | Bacilli, Bacteroidetes and Clostridia to Alphaproteobacteria | @wu2010 |
-| BFγ:α | Bacteroidetes, Firmicutes and Gammaproteobacteria to Alphaproteobacteria | @niu2018 |
+|--------|-----------------------------------------------|-----------------|
+| A:S | Alteromonas over SAR11 Clade | @ferrera2016 |
+| BNγ:β | Bacteroidetes, Nitrospira and Gammaproteobacteria over Betaproteobacteria | @garrido2014 |
+| BBC:α | Bacilli, Bacteroidetes and Clostridia over Alphaproteobacteria | @wu2010 |
+| BFγ:α | Bacteroidetes, Firmicutes and Gammaproteobacteria over Alphaproteobacteria | @niu2018 |
 
 ## What were the ranges of these ratios?
 
@@ -71,14 +71,18 @@ ratios |>
 ```{r}
 #| label: fig-overview-2
 #| fig-cap: Median nutrient concentrations with min-max ranges across seasons. Vertical axis in logarithmic scale.
-#| warning: false
 
 ratios |> 
-  ggplot(aes(x = season, y = value, color = ratio)) +
-  geom_pointrange(stat = "summary", position = position_dodge(width = .6), fun = median, fun.min = min, fun.max = max) +
+  filter(value > 0) |> 
+  ggplot(aes(x = season, y = value, fill = ratio)) +
+  geom_pointrange(
+    stat = "summary", fun = median, fun.min = min, fun.max = max,
+    position = position_dodge(width = .6),
+    shape = 21
+  ) + 
   scale_x_discrete(labels = labels_season, name = NULL) +
   scale_y_log10() +
-  scale_color_discrete(labels = labels_ratio, name = NULL) +
+  scale_fill_discrete(labels = labels_ratio, name = NULL) +
   labs(y = "Ratio") +
   theme_classic() +
   theme(

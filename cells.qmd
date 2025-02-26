@@ -22,18 +22,6 @@ cells <-
   read_csv(here("data", "cells.csv"), col_types = cols(location = col_factor(levels = locations))) |> 
   mutate(celltype = fct(celltype) |> fct_reorder(conc, .fun = max, .na_rm = T)) |> 
   mutate(season = make_season(date))
-
-filter_eukaryotes <- function(data){
-  data |> filter(celltype %in% c("nanoeuka", "picoeuka"))
-}
-
-filter_cyanobacteria <- function(data){
-  data |> filter(celltype %in% c("prochloro", "synecho"))
-}
-
-filter_dna <- function(data){
-  data |> filter(celltype %in% c("hna", "lna"))
-}
 ```
 
 ## How much of each microplankton group was there?

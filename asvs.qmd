@@ -60,7 +60,7 @@ Encounters refer to the number of samples in which a taxon was found. This count
 
 asvs |>
   ggplot(aes(x = encounters)) +
-  geom_bar(aes(fill = community), show.legend = F) +
+  geom_bar(aes(fill = community), color = "black", linewidth = .3, show.legend = F) +
   facet_wrap(~ community, ncol = 1, scale = "free_y") +
   scale_x_continuous(breaks = seq(1, 47, 2)) +
   scale_y_log10() +
@@ -76,7 +76,7 @@ asvs |>
 
 asvs |>
   ggplot(aes(x = rate)) +
-  geom_bar(aes(fill = community), show.legend = F) +
+  geom_bar(aes(fill = community), color = "black", show.legend = F) +
   facet_wrap(~ community) +
   scale_y_log10() +
   labs(x = "Rate (%)", y = "ASVs (n)") +
@@ -93,7 +93,7 @@ The number of reads each taxon has is directly related to its abundance within e
 
 asvs |> 
   ggplot(aes(x = rate)) +
-  geom_bar(aes(weight = reads, fill = community), show.legend = F) +
+  geom_bar(aes(weight = reads, fill = community), color = "black", show.legend = F) +
   facet_wrap(~ community, scales = "free_y") +
   labs(x = "Rate (%)", y = "Reads (n)") +
   theme_classic()
