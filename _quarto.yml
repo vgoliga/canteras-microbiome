@@ -12,7 +12,7 @@ website:
   title: "Canteras Microbiome"
   page-footer:
     left: |
-      Canteras Microbiome Project Website was created by Vera Gómez-Limón Gallardo.
+      Canteras Microbiome Website was created by Vera Gómez-Limón Gallardo.
     center:
       - text: License
         href: LICENSE.md
@@ -45,3 +45,4 @@ format:
       - cosmo
       - brand
     toc: true
+    number-sections: true

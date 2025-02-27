@@ -2,7 +2,7 @@
 title: "Amplicon Sequence Variants"
 ---
 
-Target genome region during polymerase chain reaction (PCR) divides the data into two major communities. These regions of rRNA are 16S and 18S, which correspond to prokaryotic and eukaryotic ribosomes, respectively. Each sequence produces an amplicon sequence variants (ASVs), which represent the fundamental observational units of our database. An ASV normally can be mapped to an individual known taxa ---we will explore taxonomic diversity in [Community Composition][community-composition.qmd]---. But it can also happens that some sequences do not correspond to any known taxa.
+Target genome region during polymerase chain reaction (PCR) divides the data into two major communities. These regions of rRNA are 16S and 18S, which correspond to prokaryotic and eukaryotic ribosomes, respectively. Each sequence produces an amplicon sequence variants (ASVs), which represent the fundamental observational units of our database. An ASV normally can be mapped to an individual known taxa ---we will explore taxonomic diversity in [Taxonomical composition](taxonomy.qmd)---. But it can also happens that some sequences do not correspond to any known taxa.
 
 ```{r}
 #| label: setup
@@ -99,8 +99,6 @@ asvs |>
   theme_classic()
 ```
 
-
-
 ```{r}
 #| label: fig-violin
 #| fig-cap: Violin plot showing the distribution of taxon relative abundance by rate. All data points are represented, with close to 10⁵ observations.
@@ -149,9 +147,15 @@ asvs |>
   tab_options(table.width = pct(100))
 ```
 
-## How does ecological diversity vary over time?
+## How can we a community ecological diversity?
 
-Community diversity is an indicator of overall microbiome health and fitness. Therefore, relative low Shannon Index values signal community degrading processes, including wastewater intrusion. @fig-shannon-season point again to our suspicion that the summer 2022 was affected by contamination.
+Community diversity is an indicator of overall microbiome health and fitness. We use the Shannon index as a measure of diversity of species in a community. It is calculated with:
+
+$H=-\sum p_i\cdot \ln{p_i}$
+
+Where $p_i$ is the relative abundance of each particula species. In this case, we use each amplicon sequence variant as a distinct species.
+
+### Did diversity vary locally?
 
 ```{r}
 #| label: fig-shannon-space
@@ -166,6 +170,8 @@ diversities |>
   labs(y = "Shannon diversity index") +
   theme_classic()
 ```
+
+### How did diversity vary over time?
 
 ```{r}
 #| label: fig-shannon-season
@@ -183,6 +189,9 @@ diversities |>
 ```
 
 ```{r}
+#| label: fig-shannon-time
+#| fig-cap: Shannon diversity index temporal evolution on a continuous scale.
+
 diversities |> 
   filter_analysis() |> 
   ggplot(aes(x = date, y = shannon)) +

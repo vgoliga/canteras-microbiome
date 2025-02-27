@@ -6,9 +6,11 @@ title: "Welcome!"
 
 Welcome to the **Canteras Microbiome Project**! A research project of marine microbial indicators of biological contamination in Las Palmas de Gran Canaria, Spain. This project is made in association with [Biological Oceanography in a Changing Ocean - IOCAG](https://www.gob-iocag.ulpgc.es/) and their team from the University of Las Palmas de Gran Canaria.
 
-The database of the project was made possible by Markel Gómez Letona^[<https://orcid.org/0000-0001-9325-3979>], Maria Fernanda Montero^[<https://orcid.org/0000-0001-8124-8136>] and Javier Arístegui^[<https://orcid.org/0000-0002-7526-7741>].
+## Acknowledgements
 
-## The monitoring program
+The database of the project was made possible by Markel Gómez Letona^[Instituto de Investigacións Mariñas Departamento de Oceanoloxía. ORCiD: <https://orcid.org/0000-0001-9325-3979>], Maria Fernanda Montero^[Universidad de Las Palmas de Gran Canaria. ORCiD: <https://orcid.org/0000-0001-8124-8136>] and Javier Arístegui^[Universidad de Las Palmas de Gran Canaria. ORCiD: <https://orcid.org/0000-0002-7526-7741>].
+
+## The Monitoring Program
 
 The microbiome monitoring consists of 47 samples. These were collected in five different locations across Las Canteras and El Confital. The monitoring period spanned for 2 years, it began in July 2021 and ended in April 2023, with a sampling frequency of around 1 month.
 
@@ -35,48 +37,9 @@ samples <-
 ```
 
 ```{r}
-#| label: fig-samples-map
-#| fig-cap: Map of Las Palmas de Gran Canaria showing sampling locations.
+#| label: fig-samples
+#| fig-cap: Sample collection across the monitoring program. Open squares represent samples of microbial compositional, crosses represent sampling of environmental parameters including cytometry.
 
-# beach <-
-#   opq(bbox = "Las Palmas de Gran Canaria, Spain") |> 
-#   add_osm_feature(key = "natural", value = "beach") |> 
-#   osmdata_sf()
-# 
-# coastline <- 
-#   opq(bbox = "Las Palmas de Gran Canaria, Spain") |> 
-#   add_osm_feature(key = "natural", value = "coastline") |> 
-#   osmdata_sf()
-#   
-# ggplot() +
-#   geom_sf(data = beach$osm_polygons) +
-#   geom_sf(data = coastline$osm_lines) +
-#   geom_point(
-#     data = samples,
-#     aes(x = longitude, y = latitude)
-#   ) +
-#   geom_text(
-#     data = samples,
-#     aes(
-#       x = longitude,
-#       y = latitude,
-#       label = location |> fct_recode(
-#         "El Confital 2" = "Confital_2",
-#         "El Confital 1" = "Confital_1",
-#         "Hotel Cristina" = "Hotel_Cristina",
-#         "Playa Chica" = "Playa_Chica",
-#         "Peña la Vieja" = "Pena_la_Vieja"
-#       )
-#     ),
-#     hjust = 1.1,
-#     vjust = .5
-#   ) +
-#   coord_sf(xlim = c(-15.46, -15.40), ylim = c(28.13, 28.17)) +
-#   theme_classic() +
-#   theme(axis.title = element_blank())
-```
-
-```{r}
 ggplot(mapping = aes(x = date, y = fct_rev(location))) +
   geom_point(data = samples, aes(shape = "Microbiome"), size = 3) +
   geom_point(data = parameters |> distinct(location, date), aes(shape = "Parameters"), size = 1) +
@@ -92,6 +55,9 @@ ggplot(mapping = aes(x = date, y = fct_rev(location))) +
   )
 ```
 ```{r}
+#| label: fig-seasons
+#| fig-cap: Microbial samples divided in seasonal intervals.
+
 samples |> 
   ggplot(aes(x = date, y = fct_rev(location), fill = season)) +
   geom_vline(xintercept = seasons_limits, linetype = "dotted") +

@@ -46,7 +46,7 @@ positive_samples <-
   pull(sample)
 ```
 
-## How did the microbiome composition change over time?
+## How did the taxonomical composition evolve over time?
 
 ```{r}
 #| label: fig-prokaryotes-season
@@ -90,7 +90,7 @@ eukaryotes |>
   theme_classic()
 ```
 
-## Was there a difference in composition between sampling stations?
+## Were there local differences in taxonomical composition?
 
 ```{r}
 #| label: fig-prokaryotes-location
@@ -136,86 +136,9 @@ eukaryotes |>
   theme_classic()
 ```
 
-## With which frequency was each taxa encountered?
+## How does rarity based abundance change over time?
 
-```{r}
-prokaryotes |>
-  filter_analysis() |> 
-  mutate(
-    order =
-      fct_lump_n(order, 11) |>
-      fct_na_value_to_level("Other") |>
-      fct_reorder(reads, .fun = sum, .desc = T) |>
-      fct_relevel("Other", after = Inf)
-  ) |> 
-  ggplot(aes(x = rate, fill = order)) +
-  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
-  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
-  scale_fill_brewer(palette = "Set3", name = NULL) +
-  labs(y = "Prokaryotic relative abundance", x = "Rate (%)") +
-  theme_classic()
-```
-
-```{r}
-eukaryotes |>
-  filter_analysis() |> 
-  mutate(
-    class =
-      fct_lump_n(class, 11) |>
-      fct_na_value_to_level("Other") |>
-      fct_reorder(reads, .fun = sum, .desc = T) |>
-      fct_relevel("Other", after = Inf)
-  ) |> 
-  ggplot(aes(x = rate, fill = class)) +
-  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
-  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
-  scale_fill_brewer(palette = "Paired", name = NULL) +
-  labs(y = "Eukaryotic relative abundance", x = "Rate (%)") +
-  theme_classic()
-```
-### Did taxonomical composition of rare taxa change over time?
-
-```{r}
-prokaryotes |>
-  filter_analysis() |> 
-  mutate(
-    order =
-      fct_lump_n(order, 11) |>
-      fct_na_value_to_level("Other") |>
-      fct_reorder(reads, .fun = sum, .desc = T) |>
-      fct_relevel("Other", after = Inf)
-  ) |> 
-  ggplot(aes(x = rate, fill = order)) +
-  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
-  facet_grid(. ~ season, scale = "free_x", labeller = as_labeller(labels_season)) +
-  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
-  scale_fill_brewer(palette = "Set3", name = NULL) +
-  labs(y = "Prokaryotic relative abundance", x = "Rate (%)") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
-```
-```{r}
-eukaryotes |>
-  filter_analysis() |> 
-  mutate(
-    class =
-      fct_lump_n(class, 11) |>
-      fct_na_value_to_level("Other") |>
-      fct_reorder(reads, .fun = sum, .desc = T) |>
-      fct_relevel("Other", after = Inf)
-  ) |> 
-  ggplot(aes(x = rate, fill = class)) +
-  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
-  facet_grid(. ~ season, scale = "free_x", labeller = as_labeller(labels_season)) +
-  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
-  scale_fill_brewer(palette = "Paired", name = NULL) +
-  labs(y = "Eukaryotic relative abundance", x = "Rate (%)") +
-  theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
-```
-
-
-## Which samples were the most unusual?
+We pick up again the concept of *rarity* previously exposed in [Amplicon Sequence Variants](asvs.qmd).
 
 ```{r}
 #| label: fig-prokaryotes-unusual
@@ -253,9 +176,110 @@ eukaryotes |>
   theme(axis.text.x = element_text(angle = 90, vjust = .5))
 ```
 
-## Did we find bacteria from human origin?
+## How does taxonomic composition change based on rarity?
 
-Yes! All bacterial species in @tbl-bacteria were detected in the monitoring and are also documented to come from the human gastrointestinal track or other bodily fluids. The most well-known of which is *Escherichia coli*, although there are many more species of bacteria living inside our bodies.
+```{r}
+prokaryotes |>
+  filter_analysis() |> 
+  mutate(
+    order =
+      fct_lump_n(order, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+  ) |> 
+  ggplot(aes(x = rate, fill = order)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  labs(y = "Prokaryotic relative abundance", x = "Rate (%)") +
+  theme_classic()
+```
+
+```{r}
+eukaryotes |>
+  filter_analysis() |> 
+  mutate(
+    class =
+      fct_lump_n(class, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+  ) |> 
+  ggplot(aes(x = rate, fill = class)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Paired", name = NULL) +
+  labs(y = "Eukaryotic relative abundance", x = "Rate (%)") +
+  theme_classic()
+```
+
+### How did rarity based taxonomical composition change over time?
+
+```{r}
+prokaryotes |>
+  filter_analysis() |> 
+  mutate(
+    order =
+      fct_lump_n(order, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+  ) |> 
+  ggplot(aes(x = season, fill = order)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  facet_grid(. ~ rate, scale = "free_x") +
+  scale_x_discrete(labels = labels_season, name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Set3", name = NULL) +
+  labs(y = "Prokaryotic relative abundance") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+```{r}
+eukaryotes |>
+  filter_analysis() |> 
+  mutate(
+    order =
+      fct_lump_n(order, 11) |>
+      fct_na_value_to_level("Other") |>
+      fct_reorder(reads, .fun = sum, .desc = T) |>
+      fct_relevel("Other", after = Inf)
+  ) |> 
+  ggplot(aes(x = season, fill = order)) +
+  geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+  facet_grid(. ~ rate, scale = "free_x") +
+  scale_x_discrete(labels = labels_season, name = NULL) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+  scale_fill_brewer(palette = "Paired", name = NULL) +
+  labs(y = "Eukaryotic relative abundance") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+```{r}
+# prokaryotes |>
+#   mutate(
+#     order =
+#       fct_lump_n(order, 11) |>
+#       fct_na_value_to_level("Other") |>
+#       fct_reorder(reads, .fun = sum, .desc = T) |>
+#       fct_relevel("Other", after = Inf)
+#   ) |> 
+#   filter(season == "2022-summer") |> 
+#   ggplot(aes(x = sample, fill = order)) +
+#   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
+#   facet_grid(. ~ season, scale = "free_x") +
+#   scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
+#   scale_fill_brewer(palette = "Set3", name = NULL) +
+#   labs(y = "Prokaryotic relative abundance", x = "Rate (%)") +
+#   theme_classic() +
+#   theme(axis.text.x = element_text(angle = 90, vjust = .5))
+```
+
+
+## Did we find bacteria of human origin (BHO)?
+
+Yes! Documented Bacteria isolated from the human gastrointestinal track or other bodily fluids are considered of human origin. The most well-known of which is *Escherichia coli*, although there are many more species of bacteria living inside our bodies.
 
 | Species                            | Reference              |
 |------------------------------------|------------------------|
@@ -281,9 +305,9 @@ Yes! All bacterial species in @tbl-bacteria were detected in the monitoring and 
 | *Prevotella buccalis*              | @shan1990              |
 | *Prevotella amnii*                 | @lawson2008            |
 
-: Species of present bacteria with a known human origin. {#tbl-bacteria}
+: Present bacteria of human origin. {#tbl-bho}
 
-### Where were these bacteria detected? When?
+### Where were BHO detected? When?
 
 ```{r}
 samples |> 
@@ -302,7 +326,7 @@ samples |>
   )
 ```
 
-### Are there compositional differences between samples?
+### Are there compositional differences between samples based on the presence of BHO?
 
 ```{r}
 prokaryotes |>

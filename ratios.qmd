@@ -2,7 +2,7 @@
 title: "Bacterial ratios"
 ---
 
-@sagovamareckova2021
+@sagovamareckova2021 offers a comprehensive review of compositional indices and ratios as paramount parameters of environmental assessment.
 
 ```{r}
 #| label: setup
@@ -54,7 +54,7 @@ ratios <-
 | BBC:α | Bacilli, Bacteroidetes and Clostridia over Alphaproteobacteria | @wu2010 |
 | BFγ:α | Bacteroidetes, Firmicutes and Gammaproteobacteria over Alphaproteobacteria | @niu2018 |
 
-## What were the ranges of these ratios?
+## Which are the overall distributions of these ratios?
 
 ```{r}
 ratios |> 
@@ -64,7 +64,7 @@ ratios |>
   scale_x_log10(labels = scales::label_number(), expand = c(0, 0)) +
   scale_y_discrete(labels = labels_ratio, name = NULL, expand = c(0, 0)) +
   coord_cartesian(clip = "off") +
-  labs(x = "ratio value") +
+  labs(x = "Ratio") +
   theme_classic()
 ```
 
@@ -91,7 +91,7 @@ ratios |>
     )
 ```
 
-## How did these ratios vary across the monotring?
+## Did bacterial ratios vary locally?
 
 ```{r}
 ratios |>
@@ -105,6 +105,8 @@ ratios |>
   labs(x = "Ratio") +
   theme_classic()
 ```
+
+## How did bacterial ratios change over time?
 
 ```{r}
 ratios |>

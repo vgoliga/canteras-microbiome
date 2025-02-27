@@ -25,7 +25,7 @@ enterococci <-
   mutate(season = make_season(date))
 ```
 
-## When did the contamiantion events happened in El Confital?
+## When contamiantion happened in El Confital?
 
 ```{r}
 #| label: fig-time
@@ -49,7 +49,7 @@ enterococci |>
 ggplot() +
   geom_point(
     data = samples,
-    aes(x = date, y = fct_rev(location), shape = "microbiome\nsamples"),
+    aes(x = date, y = fct_rev(location), shape = "Microbiome"),
   ) +
   geom_point(
     data = enterococci |> filter(!is.na(season)) |> mutate(location = "Confital_1"),
@@ -63,5 +63,7 @@ ggplot() +
     shape = "", caption = "Source: AT Hidrotecnia S.L."
     ) +
   scale_x_datetime(breaks = seasons_limits, date_labels = "%b %Y") +
-  theme_classic()
+  labs(shape = "Sample") +
+  theme_classic() +
+  theme(legend.background = element_rect(color = "black"))
 ```
