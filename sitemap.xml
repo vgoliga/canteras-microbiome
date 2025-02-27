@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://averrasion.github.io/canteras-microbiome/enterococci.html</loc>
-    <lastmod>2025-02-25T18:01:54.217Z</lastmod>
-  </url>
-  <url>
-    <loc>https://averrasion.github.io/canteras-microbiome/cells.html</loc>
-    <lastmod>2025-02-25T18:01:54.194Z</lastmod>
-  </url>
-  <url>
-    <loc>https://averrasion.github.io/canteras-microbiome/temperatures.html</loc>
-    <lastmod>2025-02-25T18:01:54.218Z</lastmod>
+    <loc>https://averrasion.github.io/canteras-microbiome/ratios.html</loc>
+    <lastmod>2025-02-27T10:24:22.174Z</lastmod>
   </url>
   <url>
     <loc>https://averrasion.github.io/canteras-microbiome/asvs.html</loc>
-    <lastmod>2025-02-25T18:01:54.192Z</lastmod>
-  </url>
-  <url>
-    <loc>https://averrasion.github.io/canteras-microbiome/indexes.html</loc>
-    <lastmod>2025-02-25T18:01:54.218Z</lastmod>
+    <lastmod>2025-02-27T10:24:22.149Z</lastmod>
   </url>
   <url>
     <loc>https://averrasion.github.io/canteras-microbiome/taxonomy.html</loc>
-    <lastmod>2025-02-25T18:01:54.218Z</lastmod>
+    <lastmod>2025-02-27T10:24:22.175Z</lastmod>
   </url>
   <url>
-    <loc>https://averrasion.github.io/canteras-microbiome/LICENSE.html</loc>
-    <lastmod>2025-02-25T18:01:54.127Z</lastmod>
+    <loc>https://averrasion.github.io/canteras-microbiome/temperatures.html</loc>
+    <lastmod>2025-02-27T10:24:22.175Z</lastmod>
+  </url>
+  <url>
+    <loc>https://averrasion.github.io/canteras-microbiome/cells.html</loc>
+    <lastmod>2025-02-27T10:24:22.151Z</lastmod>
   </url>
   <url>
     <loc>https://averrasion.github.io/canteras-microbiome/index.html</loc>
-    <lastmod>2025-02-25T18:01:54.217Z</lastmod>
+    <lastmod>2025-02-27T10:24:22.174Z</lastmod>
+  </url>
+  <url>
+    <loc>https://averrasion.github.io/canteras-microbiome/LICENSE.html</loc>
+    <lastmod>2025-02-27T10:24:22.078Z</lastmod>
+  </url>
+  <url>
+    <loc>https://averrasion.github.io/canteras-microbiome/enterococci.html</loc>
+    <lastmod>2025-02-27T10:24:22.174Z</lastmod>
   </url>
   <url>
     <loc>https://averrasion.github.io/canteras-microbiome/nutrients.html</loc>
-    <lastmod>2025-02-25T18:01:54.218Z</lastmod>
+    <lastmod>2025-02-27T10:24:22.174Z</lastmod>
   </url>
 </urlset>
