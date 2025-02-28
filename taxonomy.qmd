@@ -279,7 +279,7 @@ eukaryotes |>
 
 ## Did we find bacteria of human origin (BHO)?
 
-Yes! Documented Bacteria isolated from the human gastrointestinal track or other bodily fluids are considered of human origin. The most well-known of which is *Escherichia coli*, although there are many more species of bacteria living inside our bodies.
+Yes! Bacterial species first isolated from the human gastrointestinal track or other bodily fluids are considered of human origin. The most well-known of which is *Escherichia coli*, although there are many more species of bacteria living inside our bodies.
 
 | Species                            | Reference              |
 |------------------------------------|------------------------|

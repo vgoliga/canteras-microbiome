@@ -2,17 +2,20 @@
 title: "Welcome!"
 ---
 
-[![Las Canteras beach in Las Palmas de Gran Canaria. Foto by Bengt Nyman.](canteras.jpeg)](https://upload.wikimedia.org/wikipedia/commons/1/1e/Playa_de_las_Canteras_2016_33.jpg)
+[![Las Canteras beach in Las Palmas de Gran Canaria. Foto by Bengt Nyman.](photos/canteras.jpeg)](https://upload.wikimedia.org/wikipedia/commons/1/1e/Playa_de_las_Canteras_2016_33.jpg)
 
 Welcome to the **Canteras Microbiome Project**! A research project of marine microbial indicators of biological contamination in Las Palmas de Gran Canaria, Spain. This project is made in association with [Biological Oceanography in a Changing Ocean - IOCAG](https://www.gob-iocag.ulpgc.es/) and their team from the University of Las Palmas de Gran Canaria.
 
 ## Acknowledgements
 
-The database of the project was made possible by Markel Gómez Letona^[Instituto de Investigacións Mariñas Departamento de Oceanoloxía. ORCiD: <https://orcid.org/0000-0001-9325-3979>], Maria Fernanda Montero^[Universidad de Las Palmas de Gran Canaria. ORCiD: <https://orcid.org/0000-0001-8124-8136>] and Javier Arístegui^[Universidad de Las Palmas de Gran Canaria. ORCiD: <https://orcid.org/0000-0002-7526-7741>].
+The project's database was made possible by Markel Gómez Letona^[Instituto de Investigacións Mariñas Departamento de Oceanoloxía. ORCiD: <https://orcid.org/0000-0001-9325-3979>], Maria Fernanda Montero^[Universidad de Las Palmas de Gran Canaria. ORCiD: <https://orcid.org/0000-0001-8124-8136>] and Javier Arístegui^[Universidad de Las Palmas de Gran Canaria. ORCiD: <https://orcid.org/0000-0002-7526-7741>].
 
 ## The Monitoring Program
 
-The microbiome monitoring consists of 47 samples. These were collected in five different locations across Las Canteras and El Confital. The monitoring period spanned for 2 years, it began in July 2021 and ended in April 2023, with a sampling frequency of around 1 month.
+The microbiome monitoring consists of 47 samples collected at 5 locations across Las Canteras and El Confital. The monitoring of environmental parameters including cytometry compromised a larger frame, with 8 locations (@fig-map). Microbiome monitoring spanned for 2 years, it began in July 2021 and ended in April 2023, with a sampling frequency of around 1 month. Environmental parameters began their sampling in April 2020, coinciding with lock down of economic activity due to the COVID-19 pandemic (@fig-samples).
+
+![Sampling locations across El Confital and Las Canteras. Map by Nandi Montero](photos/map.png){#fig-map}
+
 
 ```{r}
 #| label: setup
