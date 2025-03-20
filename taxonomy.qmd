@@ -20,12 +20,14 @@ samples <-
 prokaryotes <- 
   read_csv(here("data", "prokaryotes.csv")) |> 
   left_join(samples, by = join_by(sample)) |> 
-  mutate_asv_rate()
+  mutate_asv_rate() |> 
+  mutate(key = make_key(year, week(date), location))
 
 eukaryotes <- 
   read_csv(here("data", "eukaryotes.csv")) |> 
   left_join(samples, by = join_by(sample)) |> 
-  mutate_asv_rate()
+  mutate_asv_rate() |> 
+  mutate(key = make_key(year, week(date), location))
 
 positive_samples <- 
   prokaryotes |> 
@@ -42,7 +44,6 @@ positive_samples <-
     genus == "Prevotella" & species %in% c("bivia", "disiens", "buccalis", "amnii") |
     genus == "Porphyromonas" & species %in% c("asaccharolytica")
   ) |>
-  mutate(key = make_key(year, month, location)) |> 
   pull(sample)
 ```
 
@@ -131,7 +132,7 @@ eukaryotes |>
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .3) +
   scale_fill_brewer(palette = "Paired", name = NULL) +
   scale_x_discrete(labels = labels_location, name = NULL) +
-  scale_y_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
   labs(y = "Eukaryotic relative abundance") +
   theme_classic()
 ```
@@ -145,17 +146,20 @@ We pick up again the concept of *rarity* previously exposed in [Amplicon Sequenc
 #| fig-cap: Prokaryotic composition based on encounter rate.
 
 prokaryotes |>
-  ggplot(aes(x = sample, fill = rate)) +
+  ggplot(aes(x = location, fill = rate)) +
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
   facet_grid(
     . ~ season, scales = "free_x", space = "free_x",
     labeller = as_labeller(c(labels_location, labels_season))
   ) +
-  scale_x_discrete(name = NULL) +
+  scale_x_discrete(name = NULL, labels = labels_location) +
   scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
   labs(y = "Prokaryotic relative abundance", fill = "Rate (%)") +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = .5),
+    strip.text.x = element_text(angle = 90, vjust = .5)
+  )
 ```
 
 ```{r}
@@ -163,17 +167,20 @@ prokaryotes |>
 #| fig-cap: Eukaryotic composition based on encounter rate.
 
 eukaryotes |>
-  ggplot(aes(x = sample, fill = rate)) +
+  ggplot(aes(x = location, fill = rate)) +
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
   facet_grid(
     . ~ season, scales = "free_x", space = "free_x",
     labeller = as_labeller(c(labels_location, labels_season))
   ) +
-  scale_x_discrete(name = NULL) +
+  scale_x_discrete(name = NULL, labels = labels_location) +
   scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
   labs(y = "Eukaryotic relative abundance", fill = "Rate (%)") +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = .5),
+    strip.text.x = element_text(angle = 90, vjust = .5)
+  )
 ```
 
 ## How does taxonomic composition change based on rarity?
@@ -326,6 +333,38 @@ samples |>
   )
 ```
 
+```{r}
+#| label: fig-bho-n
+#| fig-cap: Number of BHOs detected in each sample.
+
+prokaryotes |>
+  filter_analysis() |> 
+  count(
+    location, date,
+    bho =
+      genus == "Alistipes" & species %in% c("indistinctus", "onderdonkii", "timonensis") |
+      genus == "Bacteroides" & species %in% c(
+        "dorei", "vulgatus", "thetaiotaomicron", "stercoris", "plebeius", "coprocola", "eggerthii"
+      ) |
+      genus == "Butyricicoccus" & species %in% c("faecihominis") |
+      genus == "Coprobacter" & species %in% c("fastidiosus") |
+      genus == "Escherichia-Shigella" & species %in% c("coli") |
+      genus == "Intestinimonas" & species %in% c("timonensis", "butyriciproducens") |
+      genus == "Parabacteroides" & species %in% c("merdae") |
+      genus == "Prevotella" & species %in% c("bivia", "disiens", "buccalis", "amnii") |
+      genus == "Porphyromonas" & species %in% c("asaccharolytica")
+  ) |>
+  filter(bho) |> 
+  ggplot(aes(x = date, y = n)) +
+  geom_col() +
+  facet_grid(location ~ ., labeller = as_labeller(labels_location)) +
+  scale_y_continuous(breaks = seq(0, 10, 5)) +
+  labs(y = "BHO (n)") +
+  theme_bw() +
+  theme(axis.title.x = element_blank())
+```
+
+
 ### Are there compositional differences between samples based on the presence of BHO?
 
 ```{r}
@@ -338,17 +377,17 @@ prokaryotes |>
       fct_reorder(reads, .fun = sum, .desc = T) |>
       fct_relevel("Other", after = Inf)
     ) |> 
-  ggplot(aes(x = sample, fill = order)) +
+  ggplot(aes(x = location, fill = order)) +
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
   facet_grid(
     . ~ bho, scales = "free_x", space = "free_x"
   ) +
-  scale_x_discrete(name = NULL) +
+  scale_x_discrete(name = NULL, labels = labels_location) +
   scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
   scale_fill_brewer(palette = "Set3", name = NULL) +
   labs(y = "Prokaryotic relative abundance", fill = "Rate (%)") +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+  theme(axis.text.x = element_text(angle = 20, vjust = .5))
 ```
 
 ```{r}
@@ -361,16 +400,16 @@ eukaryotes |>
       fct_reorder(reads, .fun = sum, .desc = T) |>
       fct_relevel("Other", after = Inf)
     ) |> 
-  ggplot(aes(x = sample, fill = class)) +
+  ggplot(aes(x = location, fill = class)) +
   geom_bar(aes(weight = reads), position = "fill", color = "black", linewidth = .2) +
   facet_grid(
     . ~ bho, scales = "free_x", space = "free_x"
   ) +
-  scale_x_discrete(name = NULL) +
+  scale_x_discrete(name = NULL, labels = labels_location) +
   scale_y_continuous(labels = scales::percent, expand = c(0, 0)) +
   scale_fill_brewer(palette = "Paired", name = NULL) +
   labs(y = "Eukaryotic relative abundance", fill = "Rate (%)") +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5))
+  theme(axis.text.x = element_text(angle = 20, vjust = .5))
 ```
 

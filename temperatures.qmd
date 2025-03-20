@@ -59,3 +59,19 @@ temperatures |>
   theme_classic()
 ```
 
+```{r}
+#| warning: false
+#| label: fig-average
+#| fig-cap: Average sea surface temperature evolution.
+
+temperatures |> 
+  group_by(date) |> 
+  summarize(sst = mean(sst, na.rm = T)) |> 
+  ggplot(aes(x = date, y = sst)) +
+  geom_point(size = 2) +
+  geom_line(linetype = "dashed") +
+  scale_x_datetime(name = NULL, date_breaks = "4 months", date_labels = "%b %Y") +
+  labs(y = "SST (°C)") +
+  theme_classic()
+```
+

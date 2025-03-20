@@ -5,23 +5,20 @@ locations <-
     "Pena_la_Vieja", "Cicer"
   )
 
-make_key <- function(year, month, location){
-  location_key <- 
-    location |> case_match(
-      "Confital_2"      ~ "C2",
-      "Confital_1"      ~ "C1",
-      "Hotel_Cristina"  ~ "HC",
-      "Playa_Chica"     ~ "PC",
-      "Pena_la_Vieja"   ~ "PV",
-      "Reina_Isabel"    ~ "RI",
-      "La_Puntilla"     ~ "LP",
-      "Cicer"           ~ "LC"
+make_key <- function(year, week, site){
+  site_key <- 
+    site |> case_match(
+      "Confital_2"      ~ "FI2",
+      "Confital_1"      ~ "FI1",
+      "Hotel_Cristina"  ~ "CRI",
+      "Playa_Chica"     ~ "CHI",
+      "Pena_la_Vieja"   ~ "VIE",
+      "Reina_Isabel"    ~ "ISA",
+      "La_Puntilla"     ~ "PUN",
+      "Cicer"           ~ "CIC"
     )
   
-  str_glue(
-    "{substr(year, 3, 4)}{str_pad(month, 2, pad = 0)}{location_key}"
-  ) |>
-  fct()
+  paste0(site_key, "-", substr(year, 3, 4), "W", str_pad(week, 2, pad = 0))
 }
   
 
