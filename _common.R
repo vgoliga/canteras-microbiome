@@ -8,17 +8,16 @@ locations <-
 make_key <- function(year, week, site){
   site_key <- 
     site |> case_match(
-      "Confital_2"      ~ "FI2",
-      "Confital_1"      ~ "FI1",
-      "Hotel_Cristina"  ~ "CRI",
+      "Confital_1"      ~ "CF1",
+      "Confital_2"      ~ "CF2",
+      "Hotel_Cristina"  ~ "HOT",
       "Playa_Chica"     ~ "CHI",
       "Pena_la_Vieja"   ~ "VIE",
-      "Reina_Isabel"    ~ "ISA",
+      "Reina_Isabel"    ~ "REI",
       "La_Puntilla"     ~ "PUN",
       "Cicer"           ~ "CIC"
     )
-  
-  paste0(site_key, "-", substr(year, 3, 4), "W", str_pad(week, 2, pad = 0))
+  paste0(substr(year, 3, 4), "w", str_pad(week, 2, pad = 0), "-", site_key)
 }
   
 
@@ -70,7 +69,7 @@ make_season <- function(date){
 mutate_asv_rate <- function(data){
   data |> 
     mutate(encounters = n(), .after = asv, .by = asv) |> 
-    mutate(rate_pct = encounters /max(encounters) * 100, .after = encounters) |> 
+    mutate(rate_pct = encounters / max(encounters) * 100, .after = encounters) |> 
     mutate(
       rate = 
         case_when(
