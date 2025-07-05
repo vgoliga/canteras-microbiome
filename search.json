@@ -1,13 +1,10 @@
 [
   {
-    "objectID": "intro.html",
-    "href": "intro.html",
-    "title": "Our observations",
+    "objectID": "LICENSE.html",
+    "href": "LICENSE.html",
+    "title": "Creative Commons",
     "section": "",
-    "text": "The microbiome monitoring consists of 47 samples collected at 5 locations across Las Canteras and El Confital. The monitoring of environmental parameters including cytometry compromised a larger frame, with 8 locations (Figure 1). Microbiome monitoring spanned for 2 years, it began in July 2021 and ended in April 2023, with a sampling frequency of around 1 month. Environmental parameters began their sampling in April 2020, coinciding with lock down of economic activity due to the COVID-19 pandemic (Figure 2).\n\n\n\n\n\n\nFigure 1: Sampling locations across El Confital and Las Canteras. Map by Nandi Montero\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Sample collection across the monitoring program. Open squares represent samples of microbial compositional, crosses represent sampling of environmental parameters including cytometry.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3: Microbial samples divided in seasonal intervals.",
-    "crumbs": [
-      "Our observations"
-    ]
+    "text": "This webpage is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International. This license requires that reusers give credit to the creator. It allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, for noncommercial purposes only. If others modify or adapt the material, they must license the modified material under identical terms.\nFor more information visit https://creativecommons.org/licenses/by-nc-sa/4.0."
   },
   {
     "objectID": "nutrients.html",
@@ -51,76 +48,6 @@
     "crumbs": [
       "Our observations",
       "Environmental nutrients"
-    ]
-  },
-  {
-    "objectID": "enterococci.html",
-    "href": "enterococci.html",
-    "title": "Enterococci",
-    "section": "",
-    "text": "Enterococcus is a genus of bacteria widely used as an indicator of fecal contamination. Standard biochemical tests and culturing methods are used to establish the amount of colony forming units (CFU) for an amount of sampled volume of water. Public regulations define threshold values for enterococci concentration to assets water quality, and many bathing zones are closed because they don’t meet hygienic criteria. In a review study, Peter, Bertone, and Stewart (2025) claimed that sewage discharge from human and animal wastewaters is the primary source of enterococci. They also proposed heavy rainfall and storms as key drivers of acute contamination events in coastal waters.",
-    "crumbs": [
-      "Our observations",
-      "Enterococci"
-    ]
-  },
-  {
-    "objectID": "enterococci.html#when-contamiantion-happened-in-el-confital",
-    "href": "enterococci.html#when-contamiantion-happened-in-el-confital",
-    "title": "Enterococci",
-    "section": "1 When contamiantion happened in El Confital?",
-    "text": "1 When contamiantion happened in El Confital?\n\n\n\n\n\n\n\n\nFigure 1: Temporal evolution of enterococci colony forming units in El Confital.",
-    "crumbs": [
-      "Our observations",
-      "Enterococci"
-    ]
-  },
-  {
-    "objectID": "enterococci.html#how-does-this-data-overlap-with-our-mcirobiome-samples",
-    "href": "enterococci.html#how-does-this-data-overlap-with-our-mcirobiome-samples",
-    "title": "Enterococci",
-    "section": "2 How does this data overlap with our mcirobiome samples?",
-    "text": "2 How does this data overlap with our mcirobiome samples?\n\n\n\n\n\n\n\n\nFigure 2: Overlay of contamination events with microbiome sample collection.",
-    "crumbs": [
-      "Our observations",
-      "Enterococci"
-    ]
-  },
-  {
-    "objectID": "LICENSE.html",
-    "href": "LICENSE.html",
-    "title": "Creative Commons",
-    "section": "",
-    "text": "This webpage is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International. This license requires that reusers give credit to the creator. It allows reusers to distribute, remix, adapt, and build upon the material in any medium or format, for noncommercial purposes only. If others modify or adapt the material, they must license the modified material under identical terms.\nFor more information visit https://creativecommons.org/licenses/by-nc-sa/4.0."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Welcome",
-    "section": "",
-    "text": "Las Canteras beach in Las Palmas de Gran Canaria. Foto by Bengt Nyman.\nWelcome to the Canteras Microbiome Project! A research project of marine microbial indicators of biological contamination in Las Palmas de Gran Canaria, Spain. This project is made in association with Biological Oceanography in a Changing Ocean - IOCAG and their team from the University of Las Palmas de Gran Canaria.",
-    "crumbs": [
-      "Welcome"
-    ]
-  },
-  {
-    "objectID": "index.html#acknowledgements",
-    "href": "index.html#acknowledgements",
-    "title": "Welcome",
-    "section": "Acknowledgements",
-    "text": "Acknowledgements\nThe project’s database was made possible by Markel Gómez Letona1, Maria Fernanda Montero2 and Javier Arístegui3.",
-    "crumbs": [
-      "Welcome"
-    ]
-  },
-  {
-    "objectID": "index.html#footnotes",
-    "href": "index.html#footnotes",
-    "title": "Welcome",
-    "section": "Footnotes",
-    "text": "Footnotes\n\n\nInstituto de Investigacións Mariñas Departamento de Oceanoloxía. ORCiD: https://orcid.org/0000-0001-9325-3979↩︎\nUniversidad de Las Palmas de Gran Canaria. ORCiD: https://orcid.org/0000-0001-8124-8136↩︎\nUniversidad de Las Palmas de Gran Canaria. ORCiD: https://orcid.org/0000-0002-7526-7741↩︎",
-    "crumbs": [
-      "Welcome"
     ]
   },
   {
@@ -168,6 +95,87 @@
     ]
   },
   {
+    "objectID": "enterococci.html",
+    "href": "enterococci.html",
+    "title": "Enterococci",
+    "section": "",
+    "text": "Enterococcus is a genus of bacteria widely used as an indicator of fecal contamination. Standard biochemical tests and culturing methods are used to establish the amount of colony forming units (CFU) for an amount of sampled volume of water. Public regulations define threshold values for enterococci concentration to assets water quality, and many bathing zones are closed because they don’t meet hygienic criteria. In a review study, Peter, Bertone, and Stewart (2025) claimed that sewage discharge from human and animal wastewaters is the primary source of enterococci. They also proposed heavy rainfall and storms as key drivers of acute contamination events in coastal waters.",
+    "crumbs": [
+      "Our observations",
+      "Enterococci"
+    ]
+  },
+  {
+    "objectID": "enterococci.html#when-contamiantion-happened-in-el-confital",
+    "href": "enterococci.html#when-contamiantion-happened-in-el-confital",
+    "title": "Enterococci",
+    "section": "1 When contamiantion happened in El Confital?",
+    "text": "1 When contamiantion happened in El Confital?\n\n\n\n\n\n\n\n\nFigure 1: Temporal evolution of enterococci colony forming units in El Confital.",
+    "crumbs": [
+      "Our observations",
+      "Enterococci"
+    ]
+  },
+  {
+    "objectID": "enterococci.html#how-does-this-data-overlap-with-our-mcirobiome-samples",
+    "href": "enterococci.html#how-does-this-data-overlap-with-our-mcirobiome-samples",
+    "title": "Enterococci",
+    "section": "2 How does this data overlap with our mcirobiome samples?",
+    "text": "2 How does this data overlap with our mcirobiome samples?\n\n\n\n\n\n\n\n\nFigure 2: Overlay of contamination events with microbiome sample collection.",
+    "crumbs": [
+      "Our observations",
+      "Enterococci"
+    ]
+  },
+  {
+    "objectID": "ratios.html",
+    "href": "ratios.html",
+    "title": "Bacterial ratios",
+    "section": "",
+    "text": "Sagova-Mareckova et al. (2021) offers a comprehensive review of compositional indices and ratios as paramount parameters of environmental assessment.",
+    "crumbs": [
+      "Our observations",
+      "Microbiome composition",
+      "Bacterial ratios"
+    ]
+  },
+  {
+    "objectID": "ratios.html#which-are-the-overall-distributions-of-these-ratios",
+    "href": "ratios.html#which-are-the-overall-distributions-of-these-ratios",
+    "title": "Bacterial ratios",
+    "section": "1 Which are the overall distributions of these ratios?",
+    "text": "1 Which are the overall distributions of these ratios?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 1: Median nutrient concentrations with min-max ranges across seasons. Vertical axis in logarithmic scale.",
+    "crumbs": [
+      "Our observations",
+      "Microbiome composition",
+      "Bacterial ratios"
+    ]
+  },
+  {
+    "objectID": "ratios.html#did-bacterial-ratios-vary-locally",
+    "href": "ratios.html#did-bacterial-ratios-vary-locally",
+    "title": "Bacterial ratios",
+    "section": "2 Did bacterial ratios vary locally?",
+    "text": "2 Did bacterial ratios vary locally?",
+    "crumbs": [
+      "Our observations",
+      "Microbiome composition",
+      "Bacterial ratios"
+    ]
+  },
+  {
+    "objectID": "ratios.html#how-did-bacterial-ratios-change-over-time",
+    "href": "ratios.html#how-did-bacterial-ratios-change-over-time",
+    "title": "Bacterial ratios",
+    "section": "3 How did bacterial ratios change over time?",
+    "text": "3 How did bacterial ratios change over time?",
+    "crumbs": [
+      "Our observations",
+      "Microbiome composition",
+      "Bacterial ratios"
+    ]
+  },
+  {
     "objectID": "temperatures.html",
     "href": "temperatures.html",
     "title": "Sea Surface Temperature",
@@ -198,6 +206,90 @@
     "crumbs": [
       "Our observations",
       "Sea Surface Temperature"
+    ]
+  },
+  {
+    "objectID": "asvs.html",
+    "href": "asvs.html",
+    "title": "Amplicon Sequence Variants",
+    "section": "",
+    "text": "Target genome region during polymerase chain reaction (PCR) divides the data into two major communities. These regions of rRNA are 16S and 18S, which correspond to prokaryotic and eukaryotic ribosomes, respectively. Each sequence produces an amplicon sequence variants (ASVs), which represent the fundamental observational units of our database. An ASV normally can be mapped to an individual known taxa —we will explore taxonomic diversity in Taxonomical composition—. But it can also happens that some sequences do not correspond to any known taxa.",
+    "crumbs": [
+      "Our observations",
+      "Microbiome composition"
+    ]
+  },
+  {
+    "objectID": "asvs.html#are-all-taxa-equally-common",
+    "href": "asvs.html#are-all-taxa-equally-common",
+    "title": "Amplicon Sequence Variants",
+    "section": "1 Are all taxa equally common?",
+    "text": "1 Are all taxa equally common?\nEncounters refer to the number of samples in which a taxon was found. This count ranges between 47 encounters —the maximum number of samples— and 1. Encounters are indicative of taxon rarity, ASVs encountered many times are considered common while those encountered a few times are considered uncommon. We can easily calculate de probability of encountering each ASV by diving the number of encounters by the total number of repetitions. To further facilitate the analysis of ASV rate, it was arbitrarily decided to bin the probabilities into 4 equally spaced ranges of 25 %. These ranges of rate are 0–25 %, 25–50 %, 50–75 % and 75–100 %.\n\n\n\n\n\n\n\n\nFigure 1: Number of amplicon sequence variants by their encounter count. Vertical axis in logarithmic scale.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Number of amplicon sequence variants in each rate range. Vertical axis in logarithmic scale.",
+    "crumbs": [
+      "Our observations",
+      "Microbiome composition"
+    ]
+  },
+  {
+    "objectID": "asvs.html#are-asvs-equally-abundant",
+    "href": "asvs.html#are-asvs-equally-abundant",
+    "title": "Amplicon Sequence Variants",
+    "section": "2 Are ASVs equally abundant?",
+    "text": "2 Are ASVs equally abundant?\nThe number of reads each taxon has is directly related to its abundance within each particular sample. Relative abundance is preferred over reads because not all samples contained the same number of total ASV reads (Figure 3). This inconsistency can be misleading when comparing data from different samples Gloor et al. (2017). Relative abundance is easily computed by dividing the number of reads of a certain taxon by the total ASV reads within the sample. Figure 5 shows that, overall, rarer taxa are less abundant. Note that, as stated above, there are far more data points in singular and recurring categories than in the ubiquitous category. Longer right tails in infrequent ASV distribution indicate exceptional cases where rare taxa become predominant in the sample. Samples dominated by rare taxa indicate a community response driven by environmental changes.\n\n\n\n\n\n\n\n\nFigure 3: Bar plot of total number of reads for each rate category.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 4: Violin plot showing the distribution of taxon relative abundance by rate. All data points are represented, with close to 10⁵ observations.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 5: Density function distribution of amplicon sequence variants relative abundance by encounter rate. All data points are represented, with close to 10⁵ observations. Horizontal axis in logarithmic scale.\n\n\n\n\n\n\n\n\n\nTable 1: Summary table of amplicon sequence variants and their number of reads by encounter rates.\n\n\n\n\n\n\n\n\n\n\nASVs (n)\nASVs (%)\nReads (n)\nReads (%)\n\n\n\n\nEukaryotic\n\n\n&lt; 5\n13656\n81.87\n173265\n6.97\n\n\n5-25\n2352\n14.10\n513539\n20.65\n\n\n25-50\n457\n2.74\n482875\n19.42\n\n\n50-75\n139\n0.83\n439051\n17.66\n\n\n75-95\n63\n0.38\n474281\n19.08\n\n\n&gt; 95\n13\n0.08\n403303\n16.22\n\n\nTOTAL\n16680\n—\n2486314\n—\n\n\nProkaryotic\n\n\n&lt; 5\n27639\n90.06\n131193\n8.12\n\n\n5-25\n2393\n7.80\n180901\n11.19\n\n\n25-50\n403\n1.31\n156475\n9.68\n\n\n50-75\n128\n0.42\n161679\n10.00\n\n\n75-95\n75\n0.24\n174578\n10.80\n\n\n&gt; 95\n52\n0.17\n811784\n50.22\n\n\nTOTAL\n30690\n—\n1616610\n—",
+    "crumbs": [
+      "Our observations",
+      "Microbiome composition"
+    ]
+  },
+  {
+    "objectID": "asvs.html#how-can-we-a-community-ecological-diversity",
+    "href": "asvs.html#how-can-we-a-community-ecological-diversity",
+    "title": "Amplicon Sequence Variants",
+    "section": "3 How can we a community ecological diversity?",
+    "text": "3 How can we a community ecological diversity?\nCommunity diversity is an indicator of overall microbiome health and fitness. We use the Shannon index as a measure of diversity of species in a community. It is calculated with:\n\\(H=-\\sum p_i\\cdot \\ln{p_i}\\)\nWhere \\(p_i\\) is the relative abundance of each particula species. In this case, we use each amplicon sequence variant as a distinct species.\n\n3.1 Did diversity vary locally?\n\n\n\n\n\n\n\n\nFigure 6: Box plots of Shannon diversity index spatial distribution\n\n\n\n\n\n\n\n3.2 How did diversity vary over time?\n\n\n\n\n\n\n\n\nFigure 7: Box plots of Shannon diversity index seasonal distribution.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 8: Shannon diversity index temporal evolution on a continuous scale.",
+    "crumbs": [
+      "Our observations",
+      "Microbiome composition"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome",
+    "section": "",
+    "text": "Las Canteras beach in Las Palmas de Gran Canaria. Foto by Bengt Nyman.\nWelcome to the Canteras Microbiome Project! A research project of marine microbial indicators of biological contamination in Las Palmas de Gran Canaria, Spain. This project is made in association with Biological Oceanography in a Changing Ocean - IOCAG and their team from the University of Las Palmas de Gran Canaria.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#acknowledgements",
+    "href": "index.html#acknowledgements",
+    "title": "Welcome",
+    "section": "Acknowledgements",
+    "text": "Acknowledgements\nThe project’s database was made possible by Markel Gómez Letona1, Maria Fernanda Montero2 and Javier Arístegui3.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "Welcome",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nInstituto de Investigacións Mariñas Departamento de Oceanoloxía. ORCiD: https://orcid.org/0000-0001-9325-3979↩︎\nUniversidad de Las Palmas de Gran Canaria. ORCiD: https://orcid.org/0000-0001-8124-8136↩︎\nUniversidad de Las Palmas de Gran Canaria. ORCiD: https://orcid.org/0000-0002-7526-7741↩︎",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "intro.html",
+    "href": "intro.html",
+    "title": "Our observations",
+    "section": "",
+    "text": "The microbiome monitoring consists of 47 samples collected at 5 locations across Las Canteras and El Confital. The monitoring of environmental parameters including cytometry compromised a larger frame, with 8 locations (Figure 1). Microbiome monitoring spanned for 2 years, it began in July 2021 and ended in April 2023, with a sampling frequency of around 1 month. Environmental parameters began their sampling in April 2020, coinciding with lock down of economic activity due to the COVID-19 pandemic (Figure 2).\n\n\n\n\n\n\nFigure 1: Sampling locations across El Confital and Las Canteras. Map by Nandi Montero\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Sample collection across the monitoring program. Open squares represent samples of microbial compositional, crosses represent sampling of environmental parameters including cytometry.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 3: Microbial samples divided in seasonal intervals.",
+    "crumbs": [
+      "Our observations"
     ]
   },
   {
@@ -270,98 +362,6 @@
       "Our observations",
       "Microbiome composition",
       "Taxonomical composition"
-    ]
-  },
-  {
-    "objectID": "asvs.html",
-    "href": "asvs.html",
-    "title": "Amplicon Sequence Variants",
-    "section": "",
-    "text": "Target genome region during polymerase chain reaction (PCR) divides the data into two major communities. These regions of rRNA are 16S and 18S, which correspond to prokaryotic and eukaryotic ribosomes, respectively. Each sequence produces an amplicon sequence variants (ASVs), which represent the fundamental observational units of our database. An ASV normally can be mapped to an individual known taxa —we will explore taxonomic diversity in Taxonomical composition—. But it can also happens that some sequences do not correspond to any known taxa.",
-    "crumbs": [
-      "Our observations",
-      "Microbiome composition"
-    ]
-  },
-  {
-    "objectID": "asvs.html#are-all-taxa-equally-common",
-    "href": "asvs.html#are-all-taxa-equally-common",
-    "title": "Amplicon Sequence Variants",
-    "section": "1 Are all taxa equally common?",
-    "text": "1 Are all taxa equally common?\nEncounters refer to the number of samples in which a taxon was found. This count ranges between 47 encounters —the maximum number of samples— and 1. Encounters are indicative of taxon rarity, ASVs encountered many times are considered common while those encountered a few times are considered uncommon. We can easily calculate de probability of encountering each ASV by diving the number of encounters by the total number of repetitions. To further facilitate the analysis of ASV rate, it was arbitrarily decided to bin the probabilities into 4 equally spaced ranges of 25 %. These ranges of rate are 0–25 %, 25–50 %, 50–75 % and 75–100 %.\n\n\n\n\n\n\n\n\nFigure 1: Number of amplicon sequence variants by their encounter count. Vertical axis in logarithmic scale.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Number of amplicon sequence variants in each rate range. Vertical axis in logarithmic scale.",
-    "crumbs": [
-      "Our observations",
-      "Microbiome composition"
-    ]
-  },
-  {
-    "objectID": "asvs.html#are-asvs-equally-abundant",
-    "href": "asvs.html#are-asvs-equally-abundant",
-    "title": "Amplicon Sequence Variants",
-    "section": "2 Are ASVs equally abundant?",
-    "text": "2 Are ASVs equally abundant?\nThe number of reads each taxon has is directly related to its abundance within each particular sample. Relative abundance is preferred over reads because not all samples contained the same number of total ASV reads (Figure 3). This inconsistency can be misleading when comparing data from different samples Gloor et al. (2017). Relative abundance is easily computed by dividing the number of reads of a certain taxon by the total ASV reads within the sample. Figure 5 shows that, overall, rarer taxa are less abundant. Note that, as stated above, there are far more data points in singular and recurring categories than in the ubiquitous category. Longer right tails in infrequent ASV distribution indicate exceptional cases where rare taxa become predominant in the sample. Samples dominated by rare taxa indicate a community response driven by environmental changes.\n\n\n\n\n\n\n\n\nFigure 3: Bar plot of total number of reads for each rate category.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 4: Violin plot showing the distribution of taxon relative abundance by rate. All data points are represented, with close to 10⁵ observations.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 5: Density function distribution of amplicon sequence variants relative abundance by encounter rate. All data points are represented, with close to 10⁵ observations. Horizontal axis in logarithmic scale.\n\n\n\n\n\n\n\n\n\nTable 1: Summary table of amplicon sequence variants and their number of reads by encounter rates.\n\n\n\n\n\n\n\n\n\n\nASVs (n)\nASVs (%)\nReads (n)\nReads (%)\n\n\n\n\nEukaryotic\n\n\n&lt; 5\n13656\n81.87\n173265\n6.97\n\n\n5-25\n2352\n14.10\n513539\n20.65\n\n\n25-50\n457\n2.74\n482875\n19.42\n\n\n50-75\n139\n0.83\n439051\n17.66\n\n\n75-95\n63\n0.38\n474281\n19.08\n\n\n&gt; 95\n13\n0.08\n403303\n16.22\n\n\nTOTAL\n16680\n—\n2486314\n—\n\n\nProkaryotic\n\n\n&lt; 5\n27639\n90.06\n131193\n8.12\n\n\n5-25\n2393\n7.80\n180901\n11.19\n\n\n25-50\n403\n1.31\n156475\n9.68\n\n\n50-75\n128\n0.42\n161679\n10.00\n\n\n75-95\n75\n0.24\n174578\n10.80\n\n\n&gt; 95\n52\n0.17\n811784\n50.22\n\n\nTOTAL\n30690\n—\n1616610\n—",
-    "crumbs": [
-      "Our observations",
-      "Microbiome composition"
-    ]
-  },
-  {
-    "objectID": "asvs.html#how-can-we-a-community-ecological-diversity",
-    "href": "asvs.html#how-can-we-a-community-ecological-diversity",
-    "title": "Amplicon Sequence Variants",
-    "section": "3 How can we a community ecological diversity?",
-    "text": "3 How can we a community ecological diversity?\nCommunity diversity is an indicator of overall microbiome health and fitness. We use the Shannon index as a measure of diversity of species in a community. It is calculated with:\n\\(H=-\\sum p_i\\cdot \\ln{p_i}\\)\nWhere \\(p_i\\) is the relative abundance of each particula species. In this case, we use each amplicon sequence variant as a distinct species.\n\n3.1 Did diversity vary locally?\n\n\n\n\n\n\n\n\nFigure 6: Box plots of Shannon diversity index spatial distribution\n\n\n\n\n\n\n\n3.2 How did diversity vary over time?\n\n\n\n\n\n\n\n\nFigure 7: Box plots of Shannon diversity index seasonal distribution.\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 8: Shannon diversity index temporal evolution on a continuous scale.",
-    "crumbs": [
-      "Our observations",
-      "Microbiome composition"
-    ]
-  },
-  {
-    "objectID": "ratios.html",
-    "href": "ratios.html",
-    "title": "Bacterial ratios",
-    "section": "",
-    "text": "Sagova-Mareckova et al. (2021) offers a comprehensive review of compositional indices and ratios as paramount parameters of environmental assessment.",
-    "crumbs": [
-      "Our observations",
-      "Microbiome composition",
-      "Bacterial ratios"
-    ]
-  },
-  {
-    "objectID": "ratios.html#which-are-the-overall-distributions-of-these-ratios",
-    "href": "ratios.html#which-are-the-overall-distributions-of-these-ratios",
-    "title": "Bacterial ratios",
-    "section": "1 Which are the overall distributions of these ratios?",
-    "text": "1 Which are the overall distributions of these ratios?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 1: Median nutrient concentrations with min-max ranges across seasons. Vertical axis in logarithmic scale.",
-    "crumbs": [
-      "Our observations",
-      "Microbiome composition",
-      "Bacterial ratios"
-    ]
-  },
-  {
-    "objectID": "ratios.html#did-bacterial-ratios-vary-locally",
-    "href": "ratios.html#did-bacterial-ratios-vary-locally",
-    "title": "Bacterial ratios",
-    "section": "2 Did bacterial ratios vary locally?",
-    "text": "2 Did bacterial ratios vary locally?",
-    "crumbs": [
-      "Our observations",
-      "Microbiome composition",
-      "Bacterial ratios"
-    ]
-  },
-  {
-    "objectID": "ratios.html#how-did-bacterial-ratios-change-over-time",
-    "href": "ratios.html#how-did-bacterial-ratios-change-over-time",
-    "title": "Bacterial ratios",
-    "section": "3 How did bacterial ratios change over time?",
-    "text": "3 How did bacterial ratios change over time?",
-    "crumbs": [
-      "Our observations",
-      "Microbiome composition",
-      "Bacterial ratios"
     ]
   }
 ]
