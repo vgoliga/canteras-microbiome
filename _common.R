@@ -8,14 +8,14 @@ locations <-
 make_key <- function(year, week, site){
   site_key <- 
     site |> case_match(
-      "Confital_1"      ~ "CF1",
-      "Confital_2"      ~ "CF2",
-      "Hotel_Cristina"  ~ "HOT",
-      "Playa_Chica"     ~ "CHI",
-      "Pena_la_Vieja"   ~ "VIE",
-      "Reina_Isabel"    ~ "REI",
-      "La_Puntilla"     ~ "PUN",
-      "Cicer"           ~ "CIC"
+      "Confital_1"      ~ "1-CFP",
+      "Confital_2"      ~ "2-CFS",
+      "La_Puntilla"     ~ "3-PNT",
+      "Hotel_Cristina"  ~ "4-HTC",
+      "Reina_Isabel"    ~ "5-HTI",
+      "Playa_Chica"     ~ "6-PCH",
+      "Pena_la_Vieja"   ~ "7-PVJ",
+      "Cicer"           ~ "9-CCR"
     )
   paste0(substr(year, 3, 4), "w", str_pad(week, 2, pad = 0), "-", site_key)
 }
